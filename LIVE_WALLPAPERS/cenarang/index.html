@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>Live Wallpaper Template</title>
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="author" content="">
+		<meta name="shortcut icon" content="favicon.ico">
+		<link rel="stylesheet" type="text/css" href="styles.css">
+		<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	</head>
+	<body>
+
+		<div id="loading" class="">
+			<p>Loading, please wait...</p>
+		</div>
+
+		<div id="wallpaper" class="hidden">
+			<div class="background"></div>
+			<div class="top-left spin reverse"></div>
+			<div class="top-right spin"></div>
+			<div class="center"></div>
+			<div class="bottom-left"></div>
+			<div class="bottom-right"></div>
+		</div>
+
+
+		<script src="functions.js"></script>
+		<script>
+			$(window).load(function() {
+				$('#loading').addClass("hidden");
+				$('#wallpaper').removeClass("hidden");
+				playAudio("cenarang.mp3", 24);
+				colorful();
+			});
+		</script>
+
+	</body>
+</html>

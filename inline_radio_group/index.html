@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js ie6 oldie" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js ie7 oldie" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js ie8 oldie" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="keywords" content="">
+		<meta name="author" content="Adam Franco">
+		<meta name="description" content="">
+		<meta name="shortcut icon" content="favicon.ico">
+		<title>Single-Line Radio Button Group</title>
+		<style>
+			*, *::before, *::after {
+				box-sizing: border-box;
+			}
+			body {
+				background-color: #f8f8f8;
+				font-family: Arial, Helvetica, sans-serif;
+				font-size: 14px;
+				line-height: normal;
+				margin: 0;
+				padding: 0;
+			}
+			.radio-group {
+				display: table;
+			}
+			.radio-group input {
+				display: none;
+			}
+			.radio-group input:checked + label::after {
+				position: absolute;
+				z-index: 2;
+				content: "";
+				display: block;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				border: 1px solid rgb(0, 127, 255);
+				box-shadow: 0 0 1em rgba(0, 127, 255, .5);
+			}
+			.radio-group label {
+				display: table-cell;
+				padding: 1em;
+				background-color: #fff;
+				border: 1px solid #ccc;
+				border-right-width: 0;
+				position: relative;
+				text-align: center;
+			}
+			.radio-group label:last-child {
+				border-right-width: 1px;
+			}
+			.radio-group::after {
+				content: "";
+				display: block;
+				clear: both;
+			}
+			.radio-group.block {
+				table-layout: fixed;
+				width: 100%;
+			}
+			.radio-group.block label {
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="padding: 0 1em;">
+			<h1>Single-Line Radio Button Group</h1>
+			<p>Uses a psuedo-element to display the selected indicator instead of trying to work around border widths.</p>
+			<p>Notice that the automatic width resizes when shrunk below normal level, but does not break.</p>
+			<p>Also that the fill width group DOES overflow outside the container when too small, which would be important for responsive layout.</p>
+			<hr>
+			<p>Automatic Width:</p>
+			<span class="radio-group">
+				<input type="radio" id="rdo1" name="group1" checked>
+				<label for="rdo1">Option 1</label>
+				<input type="radio" id="rdo2" name="group1">
+				<label for="rdo2">Option 2</label>
+				<input type="radio" id="rdo3" name="group1">
+				<label for="rdo3">Option 3</label>
+				<input type="radio" id="rdo4" name="group1">
+				<label for="rdo4">Option 4</label>
+			</span>
+			<p>Fixed Width:</p>
+			<span class="radio-group" style="width: 512px;">
+				<input type="radio" id="rdo9" name="group3">
+				<label for="rdo9">Option 1</label>
+				<input type="radio" id="rdo10" name="group3" checked>
+				<label for="rdo10">Option 2</label>
+				<input type="radio" id="rdo11" name="group3">
+				<label for="rdo11">Option 3</label>
+				<input type="radio" id="rdo12" name="group3">
+				<label for="rdo12">Option 4</label>
+			</span>
+			<p>Fill Width:</p>
+			<span class="radio-group block">
+				<input type="radio" id="rdo5" name="group2">
+				<label for="rdo5">Option 1</label>
+				<input type="radio" id="rdo6" name="group2">
+				<label for="rdo6">Option 2</label>
+				<input type="radio" id="rdo7" name="group2" checked>
+				<label for="rdo7">Option 3</label>
+				<input type="radio" id="rdo8" name="group2">
+				<label for="rdo8">Option 4</label>
+			</span>
+		</div>
+	</body>
+</html>

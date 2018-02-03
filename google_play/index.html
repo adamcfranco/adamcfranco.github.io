@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js ie6 oldie" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js ie7 oldie" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js ie8 oldie" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="keywords" content="">
+		<meta name="author" content="">
+		<meta name="description" content="">
+		<meta name="shortcut icon" content="favicon.ico">
+		<title></title>
+		<link href="main.css" rel="stylesheet" type="text/css">
+		<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	</head>
+	<body>
+		<div class="splash">
+			<nav>
+				<button class="menu">
+					<span class="menu-bar"></span>
+					<span class="menu-bar"></span>
+					<span class="menu-bar"></span>
+					<span class="menu-bar"></span>
+					<span class="menu-bar"></span>
+					<span class="menu-bar"></span>
+				</button>
+				<h1>Google Play Inspired Menu</h1>
+				<div class="nav-right">
+					<input type="text" class="txt search">
+				</div>
+			</nav>
+		</div>
+		<div class="lengthen"></div>
+		<script>
+		$(function() {
+			$('.menu').click(function() {
+				$(this).toggleClass("active");
+			});
+			$(window).scroll(function() {
+				if ($(window).scrollTop() <= 718) {
+					$('.splash').removeClass("sticky");
+				} else {
+					$('.splash').addClass("sticky");
+				}
+			});
+		});
+		</script>
+	</body>
+</html>

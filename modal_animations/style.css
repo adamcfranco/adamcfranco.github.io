@@ -1,0 +1,94 @@
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+body {
+	font-size: 16px;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #333;
+	background-color: #f8f8f8;
+}
+.masthead, p { margin: 1em; }
+.masthead h1, .masthead h2 { font-weight: normal; }
+.masthead h2 { font-size: 1.125em; }
+.wrapper { max-width: 768px; margin: 0 auto; }
+
+
+.md {
+	position: fixed;
+	top: 0; left: 0; bottom: 0; right: 0;
+	background-color: rgba(255, 255, 255, .6);
+	visibility: hidden;
+	opacity: 0;
+	transition: all 500ms ease-in-out;
+}
+
+
+.md.active {
+	visibility: visible;
+	opacity: 1;
+}
+
+
+.md--slide-top .md-container 	{ transform: translate(0, -200%); }
+.md--slide-bottom .md-container { transform: translate(0, 200%); }
+.md--slide-left .md-container 	{ transform: translate(-200%, 0); }
+.md--slide-right .md-container 	{ transform: translate(200%, 0); }
+.md--zoom-in .md-container		{ transform: translate(0, -25%) scale(0.1); }
+.md--zoom-out .md-container		{ transform: translate(0, 50%) scale(2); }
+.md--fade .md-container			{ opacity: 0; transition-delay: 500ms; }
+/* Reset */
+.md--slide-top.active .md-container,
+.md--slide-bottom.active .md-container,
+.md--slide-left.active .md-container,
+.md--slide-right.active .md-container,
+.md--zoom-in.active .md-container,
+.md--zoom-out.active .md-container,
+.md--fade.active .md-container
+{ transform: translate(0, 0) scale(1); opacity: 1; }
+
+
+.md-container {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	transition: all 500ms ease-in-out;
+	padding: 2em;
+}
+
+
+.md-body {
+	padding: 2em;
+	background-color: #fff;
+	max-width: 768px;
+	margin: 0 auto;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1),
+				0 4px 8px 0 rgba(0, 0, 0, .2);
+	position: relative;
+}
+
+.md-close {
+	position: absolute;
+	right: 0;
+	top: 0;
+	display: block;
+	width: 32px;
+	height: 32px;
+	background-color: transparent;
+	background-image: url(close.png);
+	background-size: 60%;
+	background-position: left bottom;
+	background-repeat: no-repeat;
+	opacity: .25;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+.md-close:hover {
+	opacity: .5;
+}
+
+.md header {}
+.md article {}
+.md footer {}

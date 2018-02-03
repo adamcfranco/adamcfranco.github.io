@@ -1,0 +1,83 @@
+html, body {
+	height: 100%;
+}
+
+body {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	transition: background-color 2s ease-in-out;
+}
+
+.sandler {
+	background: url('../media/sandler.jpg') no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	width: 100%;
+	height: 100%;
+	opacity: .25;
+}
+
+.star {
+	position: absolute;
+	width: 256px;
+	height: 256px;
+	background: url('../media/star.png') no-repeat center;
+	-webkit-animation:spin 3s linear infinite;
+	-moz-animation:spin 3s linear infinite;
+	animation:spin 3s linear infinite;
+}
+.tl {
+	top: 0;
+	left:0;
+}
+.tr {
+	top: 0;
+	right: 0;
+}
+.bl {
+	bottom: 0;
+	left: 0;
+}
+.br {
+	bottom: 0;
+	right: 0;
+}
+
+.container, .pepperjustice {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.pepperjustice {
+	width: 512px;
+	height: 512px;
+}
+.pepperjustice img {
+	width: 512px;
+	height: 512px;
+	-webkit-animation:spin 6s linear infinite;
+	-moz-animation:spin 36s linear infinite;
+	animation:spin 6s linear infinite;
+	opacity: .5;
+}
+span {
+	position: relative;
+	display: inline-block;
+	width: 96px;
+	height: 96px;
+	margin-right: 16px;
+	background: url('../media/pepperjustice.png') no-repeat center; 
+	background-size: 100%;
+}
+
+
+
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
