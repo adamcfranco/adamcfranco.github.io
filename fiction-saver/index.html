@@ -1,4 +1,3 @@
-<?php require('core/support.php'); ?>
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 	<head>
@@ -46,9 +45,9 @@
 					<p>As this is a hobby project, I'm periodically adding support for different websites and formats, but there is no real time-frame for updates or replies.</p>
 					<p>If you are experiencing any issues downloading a story, please send an email to <a href="mailto:help@fiction.save">help@fiction.save</a>. I will try to provide help as often as I can.</p>
 					<p><strong>Currently supported websites:</strong></p>
-					<ul id="supported_site_list"><?php foreach($supported_websites as $website) echo "<li>$website</li>"; ?></ul>
+					<ul id="supported_site_list"></ul>
 					<p><strong>Currently supported formats:</strong></p>
-					<ul id="supported_format_list"><?php foreach($supported_formats as $format) echo "<li>$format</li>"; ?></ul>
+					<ul id="supported_format_list"></ul>
 					<p>Have a general question or want to suggest a website/format for a future update? Send an email to <a href="mailto:hello@fiction.save">hello@dandysave.com</a>!</p>
 				</div>
 				<div class="dialog-options" align="right"><input type="button" class="button flat" value="CLOSE"></div>
@@ -94,7 +93,7 @@
 			<section id="dds-form_wrapper">
 				<div class="wrapper">
 					<input id="dds-url" name="dds-url" class="textbox" placeholder="URL" value="http://www.harrypotterfanfiction.com/viewstory.php?psid=180497">
-					<select id="dds-fmt" name="dds-fmt"><?php foreach($supported_formats as $format) echo "\t\t\t\t<option value=\"$format\">$format</option>\n"; ?></select>
+					<select id="dds-fmt" name="dds-fmt"></select>
 					<button id="dds-sub" name="dds-sub" class="button"><i class="fa fa-fw fa-download"></i><span>DOWNLOAD</span></button>
 				</div>
 			</section>
@@ -136,8 +135,8 @@
 		-->
 
 		<script type="text/javascript">
-			var supported_sites = <?php echo json_encode($supported_websites); ?>;
-			var supported_formats = <?php echo json_encode($supported_formats); ?>;
+			let supported_formats = [ "epub", "html" ];
+			let supported_formats = [ "fanfiction.net", "fictionpress.com","harrypotterfanfiction.com" ];
 		</script>
 
 		<script type="text/javascript" src="core/libraries/jquery.min.js"></script>
