@@ -1,13 +1,11 @@
-// Requires vars supported_websites and supported_formats located in index.php;
-// keeps both lists server-side and easy to distribute around the page.
 var story_metadata, story_chapters, story_id, site_namespace, format_namespace, was_successful = false, chapter_links = {};
-
+let supported_formats = [ "epub", "html" ];
+let supported_sites = [ "fanfiction.net", "fictionpress.com","harrypotterfanfiction.com" ];
 /******************************
 
 	MAIN
 
 ******************************/
-
 function startProcess(url, fmt)
 {
 	clearMessages();
@@ -50,7 +48,6 @@ function startProcess(url, fmt)
 		}
 	}
 }
-
 function downloadStory()
 {
 	postMessage(2, "Getting story metadata...");
@@ -67,15 +64,11 @@ function downloadStory()
 	});
 }
 
-
-
 function cleanChapterContent(html)
 {
 	html = br2p(html);
 	return html;
 }
-
-
 function cleanMetadata(array)
 {
 	$.each(array, function(key, value)
@@ -115,7 +108,7 @@ function getWebPage(site, xpath, charset, callback)
 
 	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="' + site + '" AND xpath="' + xpath + '" AND charset="' + charset + '"') + '&format=xml&callback=?';
 
-	$.getJSON( yql, cbFunc );
+	$.getJSON( site, cbFunc );
 
 	function cbFunc(data)
 	{
