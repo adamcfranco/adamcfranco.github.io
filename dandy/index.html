@@ -64,7 +64,7 @@
 			<section id="form-wrapper" class="wrapper">
 				<input id="dds-url" name="dds-url" class="textbox" placeholder="URL" value="http://www.harrypotterfanfiction.com/viewstory.php?psid=180497">
 				<select id="dds-fmt" name="dds-fmt"></select>
-				<button id="dds-sub" name="dds-sub" class="button"><i class="fa fa-fw fa-download"></i><strong>DOWNLOAD</strong></button>
+				<button id="dds-sub" name="dds-sub" class="button"><i class="fa fa-fw fa-download"></i><span>DOWNLOAD</span></button>
 			</section>
 			<section id="preview" class="collapsed"></section>
 		</main>
@@ -89,12 +89,12 @@
 			</div>
 		</div>-->
 
-		<button style="background: tomato; font-weight: bold; font-size: 0.857em; text-transform: uppercase; color: white; cursor: pointer; padding: 1em; position: fixed; bottom: 50px; right: 50px; z-index: 9999; border-radius: 2px; box-shadow: 5px 5px 10px rgba(0, 0, 0, .3);"
+		<button style="position: fixed; bottom: 25px; right: 25px; z-index: 9999;"
 		onClick="(function()
 		{
 			$('body').toggleClass('running');
 			return false;
-		})(); return false;">Toggle Running</button>
+		})(); return false;" class="button green floating">Toggle Running</button>
 
 		<script type="text/javascript" src="core/libraries/jquery.min.js"></script>
 		<script type="text/javascript" src="core/libraries/filesaver.min.js"></script>
