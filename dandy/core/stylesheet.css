@@ -172,13 +172,13 @@ button#dds-sub:hover
 	{
 		width: 50px;
 	}
+	button#dds-sub span
+	{
+		font-size: 0;
+	}
 	button#dds-sub .fa
 	{
 		margin-right: 0;
-	}
-	button#dds-sub strong
-	{
-		display: none;
 	}
 }
 
@@ -274,11 +274,11 @@ button#dds-sub:hover
 	padding: 0.5em 1em;
 	background: transparent;
 	cursor: pointer;
-	font-weight: inherit;
 	font-size: inherit;
 	font-family: inherit;
 	color: inherit;
 	text-transform: uppercase;
+	font-weight: bold;
 }
 
 .button:not(:disabled):hover
@@ -291,20 +291,29 @@ button#dds-sub:hover
 	margin-right: 0.5em;
 }
 
+.button.green
+{
+	background: #16A085;
+	color: #e6dcdb;
+}
+.button.green:not(:disabled):hover
+{
+	background: #00876C;
+}
 
+.button.floating
+{
+	transition: box-shadow 100ms ease-in-out;
+	box-shadow: 3px 5px 10px rgba(0, 0, 0, .5);
+}
+.button.green:not(:disabled):hover {
+	box-shadow: 6px 8px 15px rgba(0, 0, 0, .4);
+}
 
 .textbox:disabled, .button:disabled, .cdd.disabled span
 {
 	cursor: not-allowed !important;
 	opacity: 0.4;
-}
-
-@media only screen and (min-width: 500px)
-{
-	.cdd span
-	{
-		font-size: 0.857em;
-	}
 }
 
 @media only screen and (min-width: 550px)
