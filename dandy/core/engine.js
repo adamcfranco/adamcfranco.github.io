@@ -9,13 +9,9 @@ let supported_sites = [ "fanfiction.net", "fictionpress.com","harrypotterfanfict
 function startProcess(url, fmt)
 {
 	clearMessages();
-
 	postMessage(2, "Trying to download <strong>" + url + "</strong> in <strong>" + fmt + "</strong> format.");
-
 	$("#dds-status h3").text("Status: Working...");
-
 	setEngineRunning();
-
 	if (validateURL(url))
 	{
 		if (checkSupportForURL(url))
@@ -48,6 +44,7 @@ function startProcess(url, fmt)
 		}
 	}
 }
+
 function downloadStory()
 {
 	postMessage(2, "Getting story metadata...");
@@ -69,6 +66,7 @@ function cleanChapterContent(html)
 	html = br2p(html);
 	return html;
 }
+
 function cleanMetadata(array)
 {
 	$.each(array, function(key, value)
@@ -93,23 +91,15 @@ function br2p(html)
 
 function getWebPage(site, xpath, charset, callback)
 {
-	if (!xpath)
+	if (!xpath) xpath = "*";
+	if (!charset) charset = "utf-8";
+	if (!site)
 	{
-		xpath = "*";
-	}
-	if (!charset)
-	{
-		charset = "utf-8"
-	}
-	if (!site) {
 		postMessage(0, "No site was passed in getWebPage.");
 		return false;
 	}
-
 	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="' + site + '" AND xpath="' + xpath + '" AND charset="' + charset + '"') + '&format=xml&callback=?';
-
-	$.getJSON( site, cbFunc );
-
+	$.getJSON( yql, cbFunc );
 	function cbFunc(data)
 	{
 		if (data.results[0])
@@ -253,6 +243,10 @@ $(function()
 	$('a[data-page]').click(function() 
 	{
 		var page = $(this).data("page");
+		if (page.includes("http://"))
+		{
+			window.open(page, "_blank");
+		}
 		$('.dialog-wrapper#'+page).addClass("active");
 		return false;
 	});
