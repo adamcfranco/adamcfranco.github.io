@@ -1,5 +1,6 @@
 $(function()
 {
+	PopulateLists();
 	GetItems();
 	$(".cdd").click( function(event)
 	{
@@ -20,6 +21,25 @@ $(function()
 		$(".cdd").removeClass("cdd-active");
 	});
 });
+
+function PopulateLists()
+{
+	let select = "";
+	let list_formats = "";
+	let list_sites = "";
+	for (let i = 0; i < supported_formats.length; i++)
+	{
+		select += "<option value=\"" + supported_formats[i] + "\">" + supported_formats[i] + "</option>";
+		list_formats += "<li>" + supported_formats[i] + "</li>";
+	}
+	for (let i = 0; i < supported_sites.length; i++)
+	{
+		list_sites += "<li>" + supported_sites[i] + "</li>";
+	}
+	$("#dds-fmt").html(select);
+	$("#supported_format_list").html(list_formats);
+	$("#supported_site_list").html(list_sites);
+}
 
 function GetItems()
 {	

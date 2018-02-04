@@ -73,22 +73,25 @@ header, section, footer
 
 #dds-header
 {
+	font-size: inherit;
 	padding-top: 100px;
 	background: #3498db;
 	color: #e6dcdb;
 }
 
-svg
-
+h1 
 {
-	width: 100%;
-	height: auto;
+	font-size: 6em;
+	line-height: 0.75em;
+	margin: 0;
+	padding: 0;
 	position: relative;
-	top: 5px;
-}
-#logo
-{
-	fill: #e6dcdb;
+	left: -6px;
+	font-weight: normal;
+	z-index: 0;
+	user-select: none;
+	-moz-user-select: none;
+	text-align: center;
 }
 
 @media only screen and (min-width: 500px)
@@ -101,19 +104,14 @@ svg
 
 }
 
-
-
-#dds-header h1
-{
-	display: none;
-}
-
 #dds-nav_links
 {
 	display: flex;
     justify-content: space-between;
 	height: 30px;
 	width: 100%;
+	position: relative;
+	z-index: 1;
 }
 #dds-nav_links li
 {
@@ -290,14 +288,16 @@ svg
 	}
 	.cdd span
 	{
-	
-		
 		font-size: 0.75em;
 	}
 }
 
 @media only screen and (min-width: 550px)
 {
+	h1
+	{
+		text-align: left;
+	}
 	#dds-nav_links
 	{
 		justify-content: flex-start;
