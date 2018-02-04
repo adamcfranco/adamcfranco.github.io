@@ -13,7 +13,7 @@
 		<link rel="icon" type="image/png" href="favicon/32.png" sizes="32x32">
 		<link rel="icon" type="image/png" href="favicon/16.png" sizes="16x16">
 		<link rel="shortcut icon" href="favicon/favicon.ico">
-		<title>Dandy - The Online Story Downloader</title>
+		<title>Dandy - The Online Story Downloader.</title>
 		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="core/stylesheet.css">
@@ -24,9 +24,8 @@
 			<div class="dialog">
 				<div class="dialog-title">Dandy is an online story downloader.</div>
 				<div class="dialog-content">
-				<p>I don't know what else to say on the matter. If you have a link to a story, and want to make it into a file, then this is the website for you.</p>
-				<p>This website is a hobby project I work on when I'm bored. So take it's usability with a grain of salt.</p>
-				<p>Created with <span class="heart">&#10084;</span> for the community over at <a href="http://www.reddit.com/r/HPFanFiction">/r/HPFanFiction</a>.</p>
+					<p>[About section here]</p>
+					<p>Created with <span class="heart">&#10084;</span> for the community over at <a href="http://www.reddit.com/r/HPFanFiction">/r/HPFanFiction</a>.</p>
 				</div>
 				<div class="dialog-options" align="right"><input type="button" class="button flat" value="CLOSE"></div>
 			</div>
@@ -48,26 +47,26 @@
 			</div>
 		</div>
 
-		<header id="dds-header">
+		<header>
 			<div class="wrapper">
-				<ul id="dds-nav_links">
-					<li><a href="#" data-page="about">about</a></li>
-					<li><a href="#" data-page="support">support</a></li>
-					<li><a href="http://adamfranco.ca/">contact</a></li>
-				</ul>
+				<nav>
+					<ul>
+						<li><a class="button" data-page="about">about</a></li>
+						<li><a class="button" data-page="support">support</a></li>
+						<li><a class="button" data-page="http://adamfranco.ca/">contact</a></li>
+					</ul>
+				</nav>
 				<h1>DANDY</h1>
 			</div>
 		</header>
 
-		<main id="dds-main">
-			<section id="dds-form_wrapper">
-				<div class="wrapper">
-					<input id="dds-url" name="dds-url" class="textbox" placeholder="URL" value="http://www.harrypotterfanfiction.com/viewstory.php?psid=180497">
-					<select id="dds-fmt" name="dds-fmt"></select>
-					<button id="dds-sub" name="dds-sub" class="button"><i class="fa fa-fw fa-download"></i><span>DOWNLOAD</span></button>
-				</div>
+		<main>
+			<section id="form-wrapper" class="wrapper">
+				<input id="dds-url" name="dds-url" class="textbox" placeholder="URL" value="http://www.harrypotterfanfiction.com/viewstory.php?psid=180497">
+				<select id="dds-fmt" name="dds-fmt"></select>
+				<button id="dds-sub" name="dds-sub" class="button"><i class="fa fa-fw fa-download"></i><strong>DOWNLOAD</strong></button>
 			</section>
-			<section id="dds-preview" class="collapsed"></section>
+			<section id="preview" class="collapsed"></section>
 		</main>
 		
 		<section id="dds-status">
@@ -82,13 +81,20 @@
 			</div>
 		</section>
 
-		<div id="no-js-notification">
+		<!--<div id="no-js-notification">
 			<div class="wrapper">
 				<span class="header-img"></span>
 				<p><strong>Hi!</strong></p>
 				<p>Dandy is built on <strong>javascript</strong>. Please enable it and refresh your browser in order to use it!</p>
 			</div>
-		</div>
+		</div>-->
+
+		<button style="background: tomato; font-weight: bold; font-size: 0.857em; text-transform: uppercase; color: white; cursor: pointer; padding: 1em; position: fixed; bottom: 50px; right: 50px; z-index: 9999; border-radius: 2px; box-shadow: 5px 5px 10px rgba(0, 0, 0, .3);"
+		onClick="(function()
+		{
+			$('body').toggleClass('running');
+			return false;
+		})(); return false;">Toggle Running</button>
 
 		<script type="text/javascript" src="core/libraries/jquery.min.js"></script>
 		<script type="text/javascript" src="core/libraries/filesaver.min.js"></script>
