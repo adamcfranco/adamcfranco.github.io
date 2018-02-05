@@ -205,7 +205,7 @@ var harrypotterfanfictioncom =
 	{
 		getWebPage(url, "//select[@name='chapterid']", "iso-8859-1", function(results)
 		{
-			var select = $(results);
+			var select = $(results[0]);
 			var psid = select.find("option:contains('Story Index')").attr("value");
 			select.find("option").each(function(i)
 			{
@@ -280,16 +280,17 @@ var harrypotterfanfictioncom =
 			var chapter_url = "http://www.harrypotterfanfiction.com/viewstory.php" + chapter_links[chapter_number].url;
 			getWebPage(chapter_url, "//div[@id='fluidtext']", "iso-8859-1", function(results)
 			{
-				var raw = $(results);
+				var raw = results[0].innerHTML;
 				var title = chapter_links[chapter_number].title;
-				var content = cleanChapterContent(raw.html());
+				var content = cleanChapterContent(raw);
+				console.log(content);
 				chapters.push({ title, content });
 
-				if (chapter_number == 1) { console.log(raw.html()); }
+				//if (chapter_number == 1) { console.log(raw.html()); }
 
 				if (chapter_number >= num_chapters)
 				{
-					updateProgressBar(num_chapters+1, num_chapters, progressid);
+					updateProgressBar(num_chapters + 1, num_chapters, progressid);
 					callback(chapters);
 				}
 				else
@@ -298,7 +299,7 @@ var harrypotterfanfictioncom =
 					{
 						chapter_number++;
 						GetChapter();
-					}, 100);
+					}, 1000);
 				}
 			});
 		}

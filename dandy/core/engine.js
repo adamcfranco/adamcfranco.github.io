@@ -64,6 +64,8 @@ function downloadStory()
 function cleanChapterContent(html)
 {
 	html = br2p(html);
+	html = html.replace("<p></p>", "");
+
 	return html;
 }
 
@@ -88,7 +90,6 @@ function br2p(html)
 	html = "<p>" + parts.join("</p><p>") + "</p>";
 	return html;
 }
-
 function getWebPage(site, xpath, charset, callback)
 {
 	if (!xpath) xpath = "*";
@@ -98,23 +99,29 @@ function getWebPage(site, xpath, charset, callback)
 		postMessage(0, "No site was passed in getWebPage.");
 		return false;
 	}
-	var yql = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent('select * from html where url="' + site + '" AND xpath="' + xpath + '" AND charset="' + charset + '"') + '&format=xml&callback=?';
-	$.getJSON( yql, cbFunc );
-	function cbFunc(data)
-	{
-		if (data.results[0])
+	$.ajax({
+		type: "POST",
+		url: "http://anyorigin.com/go?url=" + encodeURIComponent(site) + "&callback=?",
+		contentType: "application/json; charset=" + charset,
+		dataType: "json",
+		success: function(json)
 		{
-			data = data.results[0].replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-			if ( typeof callback === 'function') 
-			{
-				callback(data);
-			}
-		}
-		else
+			var page = json.contents.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+			var doc = new DOMParser().parseFromString(page, 'text/html');
+			var nodes = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null);			
+	        var result = nodes.iterateNext();
+	        var final = [];   
+	        while (result) {
+	           	final.push(result);
+	            result = nodes.iterateNext();
+	        } 
+			callback(final);
+		},
+		error: function(xhr,textStatus, errorThrown)
 		{
-			postMessage(0, "Nothing returned from getWebPage function.");
+			console.log("ERROR: " + xhr.responseText);
 		}
-	}
+	});
 }
 
 function createCoverImage(title, author, callback, outputFormat)
@@ -392,6 +399,6 @@ function printPreview(metadata)
 			 + '	<li><a title="Update Date">' + (metadata["date_updated"] == 'Never' ? 'Never' : formatTimestamp(metadata["date_updated"])) + '</a></li>'
 			 + '</ul>'
 			 + '<div class="clear"></div>'
-	$('#dds-preview').html(html).removeClass("collapsed");
+	$('#preview').html(html).removeClass("collapsed");
 }
 
