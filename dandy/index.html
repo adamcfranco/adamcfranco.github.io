@@ -13,97 +13,19 @@
 		<link rel="icon" type="image/png" href="favicon/32.png" sizes="32x32">
 		<link rel="icon" type="image/png" href="favicon/16.png" sizes="16x16">
 		<link rel="shortcut icon" href="favicon/favicon.ico">
-		<title>Dandy - The Online Story Downloader.</title>
+		<title>Dandy - Under Construction</title>
 		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="core/stylesheet.css">
 	</head>
 	<body>
 
-		<div class="dialog-wrapper" id="about">
-			<div class="dialog">
-				<div class="dialog-title">Dandy is an online story downloader.</div>
-				<div class="dialog-content">
-					<p>[About section here]</p>
-					<p>Created with <span class="heart">&#10084;</span> for the community over at <a href="http://www.reddit.com/r/HPFanFiction">/r/HPFanFiction</a>.</p>
-				</div>
-				<div class="dialog-options" align="right"><input type="button" class="button flat" value="CLOSE"></div>
-			</div>
-		</div>
-
-		<div class="dialog-wrapper" id="support">
-			<div class="dialog">
-				<div class="dialog-title">Support Information</div>
-				<div class="dialog-content">
-					<p>I'm periodically adding support for different websites and formats, but there is no real time-frame for updates or fixes.</p>
-					<p>If you are experiencing any issues downloading a story, please send an email to <a href="mailto:dandy@adamfranco.ca">dandy@adamfranco.ca</a>. I will try to provide help as often as I can.</p>
-					<p><strong>Currently supported websites:</strong></p>
-					<ul id="supported_site_list"></ul>
-					<p><strong>Currently supported formats:</strong></p>
-					<ul id="supported_format_list"></ul>
-					<p>Have a general question or want to suggest a website/format for a future update? Send an email to <a href="mailto:dandy@adamfranco.ca">dandy@adamfranco.ca</a>!</p>
-				</div>
-				<div class="dialog-options" align="right"><input type="button" class="button flat" value="CLOSE"></div>
-			</div>
-		</div>
-
-		<header>
+		<section id="construction">
 			<div class="wrapper">
-				<nav>
-					<ul>
-						<li><a class="button" data-page="about">about</a></li>
-						<li><a class="button" data-page="support">support</a></li>
-						<li><a class="button" data-page="http://adamfranco.ca/">contact</a></li>
-					</ul>
-				</nav>
-				<h1>DANDY</h1>
-			</div>
-		</header>
-
-		<main>
-			<section id="form-wrapper" class="wrapper">
-				<input id="dds-url" name="dds-url" class="textbox" placeholder="URL" value="http://www.harrypotterfanfiction.com/viewstory.php?psid=180497">
-				<select id="dds-fmt" name="dds-fmt"></select>
-				<button id="dds-sub" name="dds-sub" class="button"><i class="fa fa-fw fa-download"></i><span>DOWNLOAD</span></button>
-			</section>
-			<section id="preview" class="collapsed"></section>
-		</main>
-		
-		<section id="dds-status">
-			<div class="wrapper">
-				<h3>Status: Idle</h3>
-				<div id="dds-status_table_wrapper">
-					<table id="dds-status_table">
-						<tbody>
-						</tbody>
-					</table>
-				</div>
+				<h2>We're not ready!</h2>
+				<p>This app is still under development. Please check back later.</p>
 			</div>
 		</section>
-
-		<!--<div id="no-js-notification">
-			<div class="wrapper">
-				<span class="header-img"></span>
-				<p><strong>Hi!</strong></p>
-				<p>Dandy is built on <strong>javascript</strong>. Please enable it and refresh your browser in order to use it!</p>
-			</div>
-		</div>-->
-
-		<button style="position: fixed; bottom: 25px; right: 25px; z-index: 9999;"
-		onClick="(function()
-		{
-			$('body').toggleClass('running');
-			return false;
-		})(); return false;" class="button green floating">Toggle Running</button>
-
-		<script type="text/javascript" src="core/libraries/jquery.min.js"></script>
-		<script type="text/javascript" src="core/libraries/filesaver.min.js"></script>
-		<script type="text/javascript" src="core/libraries/jszip.min.js"></script>
-		<script type="text/javascript" src="core/modules/dropdown.js"></script>
-		<script type="text/javascript" src="core/modules/validation.js"></script>
-		<script type="text/javascript" src="core/modules/websites.js"></script>
-		<script type="text/javascript" src="core/modules/formats.js"></script>
-		<script type="text/javascript" src="core/engine.js"></script>
 
 	</body>
 </html>
