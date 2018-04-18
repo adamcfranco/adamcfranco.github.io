@@ -21,7 +21,7 @@ var fanfictionnet =
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "https://www.fanfiction.net/s/" + story_id + "/";
+		var meta_url = "http://www.fanfiction.net/s/" + story_id + "/";
 		getWebPage(meta_url, "//div[@id='profile_top']", null, function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
@@ -53,7 +53,7 @@ var fanfictionnet =
 			   date_publish: publish,
 			   date_updated: updated,
 			         status: getMatches(infoblock, /Status\: ([\w]+)/g, 0),
-			    link_author: "https://www.fanfiction.net" + div.children("a").attr("href"),
+			    link_author: "http://www.fanfiction.net" + div.children("a").attr("href"),
 			     link_story: meta_url,
 			         source: "FanFiction.net"
 			};
@@ -69,7 +69,7 @@ var fanfictionnet =
 		function GetChapter()
 		{
 			updateProgressBar(chapter_number, num_chapters, progressid);
-			var chapter_url = "https://www.fanfiction.net/s/" + story_id + "/" + chapter_number + "/";
+			var chapter_url = "http://www.fanfiction.net/s/" + story_id + "/" + chapter_number + "/";
 			getWebPage(chapter_url, "//div[@id='content_wrapper_inner']", null, function(results)
 			{
 				var raw = $(results);
@@ -116,7 +116,7 @@ var fictionpresscom =
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "https://www.fictionpress.com/s/" + story_id + "/";
+		var meta_url = "http://www.fictionpress.com/s/" + story_id + "/";
 		getWebPage(meta_url, "//div[@id='profile_top']", null, function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
@@ -148,7 +148,7 @@ var fictionpresscom =
 			   date_publish: publish,
 			   date_updated: updated,
 			         status: getMatches(infoblock, /Status\: ([\w]+)/g, 0),
-			    link_author: "https://www.fictionpress.com" + div.children("a").attr("href"),
+			    link_author: "http://www.fictionpress.com" + div.children("a").attr("href"),
 			     link_story: meta_url,
 			         source: "FictionPress.com"
 			};
@@ -164,7 +164,7 @@ var fictionpresscom =
 		function GetChapter()
 		{
 			updateProgressBar(chapter_number, num_chapters, progressid);
-			var chapter_url = "https://www.fictionpress.com/s/" + story_id + "/" + chapter_number + "/";
+			var chapter_url = "http://www.fictionpress.com/s/" + story_id + "/" + chapter_number + "/";
 			getWebPage(chapter_url, "//div[@id='content_wrapper_inner']", null, function(results)
 			{
 				var raw = $(results);
@@ -224,7 +224,7 @@ var harrypotterfanfictioncom =
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "https://www.harrypotterfanfiction.com/viewstory.php?psid=" + story_id;
+		var meta_url = "http://www.harrypotterfanfiction.com/viewstory.php?psid=" + story_id;
 		getWebPage(meta_url, "//div[@id='mainpage2']", "iso-8859-1", function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
@@ -251,7 +251,7 @@ var harrypotterfanfictioncom =
 			   date_publish: getMatches(infotext, /First Published\: ([\d\.]+)\[END\]/g, 0),
 			   date_updated: getMatches(infotext, /Last Updated\: ([\d\.]+)\[END\]/g, 0),
 			         status: getMatches(infotext, /Status\: ([\w]+)\[END\]/g, 0),
-			    link_author: "https://www.harrypotterfanfiction.com/" + div.find("a[href*='showuid']").attr("href"),
+			    link_author: "http://www.harrypotterfanfiction.com/" + div.find("a[href*='showuid']").attr("href"),
 			     link_story: meta_url,
 			         source: "HarryPotterFanFiction.com"
 			};
@@ -269,7 +269,7 @@ var harrypotterfanfictioncom =
 		function GetChapter()
 		{
 			updateProgressBar(chapter_number, num_chapters, progressid);
-			var chapter_url = "https://www.harrypotterfanfiction.com/viewstory.php" + chapter_links[chapter_number].url;
+			var chapter_url = "http://www.harrypotterfanfiction.com/viewstory.php" + chapter_links[chapter_number].url;
 			getWebPage(chapter_url, "//div[@id='fluidtext']", "iso-8859-1", function(results)
 			{
 				var raw = results[0].innerHTML;
