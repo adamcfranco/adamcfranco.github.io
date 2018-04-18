@@ -108,7 +108,7 @@ function getWebPage(site, xpath, charset, callback)
 	}
 	$.ajax({
 		type: "POST",
-		url: "https://anyorigin.com/go?url=" + encodeURIComponent(site) + "&callback=?",
+		url: "//anyorigin.com/go?url=" + encodeURIComponent(site) + "&callback=?",
 		contentType: "application/html; charset="+charset,
 		dataType: "json",
 		success: function(json)
