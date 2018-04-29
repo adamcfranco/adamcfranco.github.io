@@ -21,7 +21,7 @@ var fanfictionnet =
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "//www.fanfiction.net/s/" + story_id + "/";
+		var meta_url = "www.fanfiction.net/s/" + story_id + "/";
 		getWebPage(meta_url, "//div[@id='profile_top']", null, function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
@@ -69,7 +69,7 @@ var fanfictionnet =
 		function GetChapter()
 		{
 			updateProgressBar(chapter_number, num_chapters, progressid);
-			var chapter_url = "//www.fanfiction.net/s/" + story_id + "/" + chapter_number + "/";
+			var chapter_url = "www.fanfiction.net/s/" + story_id + "/" + chapter_number + "/";
 			getWebPage(chapter_url, "//div[@id='content_wrapper_inner']", null, function(results)
 			{
 				var raw = $(results);
@@ -116,7 +116,7 @@ var fictionpresscom =
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "//www.fictionpress.com/s/" + story_id + "/";
+		var meta_url = "www.fictionpress.com/s/" + story_id + "/";
 		getWebPage(meta_url, "//div[@id='profile_top']", null, function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
@@ -164,7 +164,7 @@ var fictionpresscom =
 		function GetChapter()
 		{
 			updateProgressBar(chapter_number, num_chapters, progressid);
-			var chapter_url = "//www.fictionpress.com/s/" + story_id + "/" + chapter_number + "/";
+			var chapter_url = "www.fictionpress.com/s/" + story_id + "/" + chapter_number + "/";
 			getWebPage(chapter_url, "//div[@id='content_wrapper_inner']", null, function(results)
 			{
 				var raw = $(results);
@@ -224,7 +224,7 @@ var harrypotterfanfictioncom =
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "//www.harrypotterfanfiction.com/viewstory.php?psid=" + story_id;
+		var meta_url = "www.harrypotterfanfiction.com/viewstory.php?psid=" + story_id;
 		getWebPage(meta_url, "//div[@id='mainpage2']", "iso-8859-1", function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
@@ -269,7 +269,7 @@ var harrypotterfanfictioncom =
 		function GetChapter()
 		{
 			updateProgressBar(chapter_number, num_chapters, progressid);
-			var chapter_url = "//www.harrypotterfanfiction.com/viewstory.php" + chapter_links[chapter_number].url;
+			var chapter_url = "www.harrypotterfanfiction.com/viewstory.php" + chapter_links[chapter_number].url;
 			getWebPage(chapter_url, "//div[@id='fluidtext']", "iso-8859-1", function(results)
 			{
 				var raw = results[0].innerHTML;
