@@ -20,6 +20,9 @@ function startProcess(url, fmt)
 	postMessage(2, "Trying to download <strong>" + url + "</strong> in <strong>" + fmt + "</strong> format.");
 	$("#dds-status h3").text("Status: Working...");
 	setEngineRunning();
+	url = url.replace("https:", "");
+	url = url.replace("http:", "");
+	console.log(url);
 	if (validateURL(url))
 	{
 		if (checkSupportForURL(url))
