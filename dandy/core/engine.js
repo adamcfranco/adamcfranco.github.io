@@ -20,8 +20,6 @@ function startProcess(url, fmt)
 	postMessage(2, "Trying to download <strong>" + url + "</strong> in <strong>" + fmt + "</strong> format.");
 	$("#dds-status h3").text("Status: Working...");
 	setEngineRunning();
-	url = url.replace("https:", "");
-	url = url.replace("http:", "");
 	console.log(url);
 	if (validateURL(url))
 	{
@@ -113,11 +111,12 @@ function getWebPage(site, xpath, charset, callback)
 		type: "POST",
 		//url: "//www.anyorigin.com/go?url=" + encodeURIComponent(site) + "&callback=?",
 		//url: "//www.whateverorigin.org/get?url=" + encodeURIComponent(site) + "&callback=?",
-		url: '//allorigins.me/get?url=' + encodeURIComponent(site) +'&callback=?',
+		url: 'https://allorigins.me/get?url=' + encodeURIComponent(site) +'&callback=?',
 		contentType: "application/html; charset="+charset,
 		dataType: "json",
 		success: function(json)
 		{
+			console.log(json);
 			var page = json.contents.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<img[^>]+>/gi, '');
 			var doc = new DOMParser().parseFromString(page, 'text/html');
 			var nodes = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null);
