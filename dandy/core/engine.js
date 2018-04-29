@@ -1,6 +1,6 @@
 var story_metadata, story_chapters, story_id, site_namespace, format_namespace, was_successful = false, chapter_links = {};
 let supported_formats = [ "EPUB", "HTML" ];
-let supported_sites = [ "fanfiction.net", "fictionpress.com","harrypotterfanfiction.com" ];
+let supported_sites = [ "fanfiction.net", "fictionpress.com" ];
 let tidy_options = 
 {
 	"indent": "auto",
@@ -72,7 +72,7 @@ function downloadStory()
 
 function cleanChapterContent(html)
 {
-	html = br2p(html).replace(/<[^\/>][^>]*><\/[^>]+>/gi, '').replace(/\s[\s]+/g, ' ');
+	//html = br2p(html).replace(/<[^\/>][^>]*><\/[^>]+>/gi, '').replace(/\s[\s]+/g, ' ');
 	var result = tidy_html5(html, tidy_options);
 	return result;
 }
@@ -116,7 +116,7 @@ function getWebPage(site, xpath, charset, callback)
 		dataType: "json",
 		success: function(json)
 		{
-			console.log(json);
+			//console.log(json);
 			var page = json.contents.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<img[^>]+>/gi, '');
 			var doc = new DOMParser().parseFromString(page, 'text/html');
 			var nodes = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null);
@@ -288,20 +288,21 @@ $(function()
 		$("#format-list").toggleClass("active");
 	});
 
-	$("#format-list p").click(function()
+
+	$("#format-list").on("click", "p", function()
 	{
 		$("#format span").html($(this).text());
 	});
 
 	$.each(supported_sites, function(index, value)
 	{
-		$('#supported-sites').append('<li><small>'+value+'</small></li>');
+		$('#supported_site_list').append('<li><small>'+value+'</small></li>');
 	});
 
 	$.each(supported_formats, function(index, value)
 	{
-		$('#dds-fmt').append('<option value="' + value + '">' + value + '</option>');
-		$('#supported-formats').append('<li><small>'+value+'</small></li>');
+		$('#format-list').append('<p>' + value + '</p>');
+		$('#supported_format_list').append('<li><small>'+value+'</small></li>');
 	});
 
 });

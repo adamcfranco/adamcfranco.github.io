@@ -9,9 +9,10 @@ body
 	font-size: 14px;
 	line-height: 1.5;
 	font-family: "Open Sans", Arial, sans-serif;
-	color: #e6dcdb;
-	background: #34495e;
-
+	color: rgb(100, 100, 100);
+	background: rgb(245, 245, 245);
+	padding: 0 2em;
+	min-width: 320px;
 }
 
 a, a:link, a:visited
@@ -43,8 +44,14 @@ header, section, footer
 {
 	margin: 0 auto;
 	width: 100%;
-	min-width: 300px;
-	max-width: 800px;
+	min-width: 320px;
+	max-width: 960px;
+}
+.wrapper:after
+{
+	content: "";
+	display: table;
+	clear: both;
 }
 
 .fa-times-circle
@@ -75,21 +82,27 @@ header
 {
 	height: 40vh;
 	font-size: inherit;
-	background: #3498db;
-	color: #e6dcdb;
 	transition: height 125ms ease-in-out,
 				background 250ms ease-in-out,
 				color 250ms ease-in-out;
 	position: relative;
 }
 
+header .wrapper
+{
+	position: relative;
+	height: 100%;
+	padding-bottom: 2em;
+}
+
 header nav
 {
 	position: absolute;
 	z-index: 1;
-	bottom: 70px;
+	bottom: 90px;
 	font-weight: bold;
 	font-size: 0.857em;
+	width: 100%;
 }
 
 header nav ul
@@ -98,6 +111,7 @@ header nav ul
 	padding: 0;
 	list-style-type: none;
 	display: flex;
+	justify-content: center;
 }
 
 header nav ul li 
@@ -107,26 +121,23 @@ header nav ul li
 
 header h1 
 {
-	font-size: 6em;
+	font-size: 4em;
 	margin: 0;
 	font-weight: lighter;
 	position: absolute;
 	z-index: 0;
-	bottom: -31px;
+	bottom: 10px;
 	pointer-events: none;
 	transition: color 250ms ease-in-out;
+	width: 100%;
+	text-align: center;
+	letter-spacing: -0.075em;
 }
 
 
 body.running header
 {
-	background: #1ABC9C;
-	color: #16A085;
-}
-
-body.running nav .button:hover
-{
-	color: #e6dcdb;
+	color: #27ae60;
 }
 
 @media only screen and (max-width: 480px)
@@ -143,10 +154,11 @@ body.running nav .button:hover
 
 */
 
-
-body.running #form
+.disabled, button:disabled
 {
-	background: #16a085;
+	color: rgb(0, 0, 0, .2) !important;
+	cursor: not-allowed !important;
+	pointer-events: none;
 }
 @media only screen and (max-width: 480px)
 {
@@ -192,7 +204,7 @@ body.running #form
 
 .button:not(:disabled):hover
 {
-	background: rgba(0, 0, 0, 0.1);
+	
 }
 
 .button .fa
@@ -200,15 +212,7 @@ body.running #form
 	margin-right: 0.5em;
 }
 
-.button.green
-{
-	background: #16A085;
-	color: #e6dcdb;
-}
-.button.green:not(:disabled):hover
-{
-	background: #00876C;
-}
+
 
 .button.floating
 {
@@ -219,6 +223,11 @@ body.running #form
 	box-shadow: 6px 8px 15px rgba(0, 0, 0, .4);
 }
 
+.button.green
+{
+	color: #16A085;
+}
+
 /*
 
 	STATUS
@@ -227,8 +236,6 @@ body.running #form
 
 #status
 {
-	background: #34495e;
-	color: #e6dcdb;
 	padding-top: 4em;
 	padding-bottom: 4em;
 }
@@ -290,7 +297,7 @@ body.running #form
 	font-size: 0.875em;
 	font-weight: bold;
 	text-transform: uppercase;
-	color: #e6dcdb;
+	color: white;
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -390,13 +397,12 @@ body.running #form
 
 #preview
 {
-	z-index: 1;
+	position: relative;
 	color: #34495e;
 	padding: 4em 0 0 0;
 	transition: max-height 500ms ease-in-out,
 				padding 500ms ease-in-out;
 	max-height: 1000px;
-	overflow: hidden;
 	transition-delay: 0ms;
 }
 
@@ -410,12 +416,13 @@ body.running #form
 #preview .wrapper
 {
 	padding: 2em;
-	border-radius: 2px;
 	background: white;
-	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	transition: opacity 250ms ease-in-out;
 	transition-delay: 500ms;
 	opacity: 1;
+	position: relative;
+	z-index: 1;
 }
 #preview.collapsed .wrapper
 {
@@ -448,7 +455,7 @@ body.running #form
 #preview #meta a
 {
 	color: white;
-	background: #16A085;
+	background: #27ae60;
 	display: inline-block;
 	padding: 0.25em 0.5em;
 	font-size: 0.875em;
@@ -457,17 +464,19 @@ body.running #form
 	text-transform: uppercase;
 }
 
-#form
-{	
-	background: #e6dcdb;
-	color: #34495e;
-
-}
-
 #form .wrapper
 {
 	display: flex;
 	height: 50px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	background: white;
+	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+body.running #form .wrapper
+{
+	box-shadow: none;
+	background: transparent;
 }
 
 #form #url
@@ -498,18 +507,15 @@ body.running #form
 	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 	cursor: default;
 	line-height: 1.5em;
-	max-width: 0;
-	max-height: 0;
-	overflow: hidden;
 	flex-wrap: nowrap;
-	transition: max-width 	400ms ease-in-out,
-				max-height 	400ms ease-in-out;
+	transform-origin: 100% 25px;
+	transform: scale(0);
+	transition: all 0.25s ease;
 }
 
 #format-list.active
 {
-	max-width: 1000px;
-	max-height: 1000px;
+	transform: scale(1);
 }
 
 #format-list p
