@@ -67,7 +67,7 @@ header, section, footer
 .heart
 {
 	color: lightpink;
-	font-size: 2em;
+	font-size: 1.5em;
 	position: relative;
 	top: .20em;
 }
@@ -81,8 +81,9 @@ header, section, footer
 header
 {
 	height: 40vh;
+	min-height: 160px;
 	font-size: inherit;
-	transition: height 125ms ease-in-out,
+	transition: 
 				background 250ms ease-in-out,
 				color 250ms ease-in-out;
 	position: relative;
@@ -90,16 +91,17 @@ header
 
 header .wrapper
 {
-	position: relative;
 	height: 100%;
 	padding-bottom: 2em;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-end;
 }
 
 header nav
 {
-	position: absolute;
-	z-index: 1;
-	bottom: 90px;
+
 	font-weight: bold;
 	font-size: 0.857em;
 	width: 100%;
@@ -112,11 +114,7 @@ header nav ul
 	list-style-type: none;
 	display: flex;
 	justify-content: center;
-}
-
-header nav ul li 
-{
-	margin-right: 1em;
+	align-items: center;
 }
 
 header h1 
@@ -124,9 +122,6 @@ header h1
 	font-size: 4em;
 	margin: 0;
 	font-weight: lighter;
-	position: absolute;
-	z-index: 0;
-	bottom: 10px;
 	pointer-events: none;
 	transition: color 250ms ease-in-out;
 	width: 100%;
@@ -331,7 +326,7 @@ body.running header
 	align-items: center;
 	justify-content: center;
 	flex-wrap: wrap;
-	z-index: 3;
+	z-index: 2000;
 	visibility: hidden;
 	opacity: 0;
 	transition: visibility 0s linear 600ms, opacity 250ms ease-in-out 500ms;
@@ -349,14 +344,15 @@ body.running header
 	border-radius: 2px;
 	background: white;
 	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-	min-width: 300px;
+	
 	width: 100%;
-	max-width: 500px;
-	margin: 0 16px;
+	max-width: 700px;
+	margin: 0 2em;
 	transform: translateY(20%);
 	opacity: 0;
 	transition: transform .25s ease-in-out 250ms, opacity .25s ease-in-out 250ms;
 	color: #34495e;
+	z-index: 2010;
 }
 
 .dialog-wrapper.active .dialog
@@ -444,12 +440,18 @@ body.running header
 {
 	margin-top: 1em;
 	list-style-type: none;
-	display: flex;
+	display: block;
+	position: relative;
+}
+#preview p
+{
+	word-wrap: break-word;
 }
 
 #preview #meta li
 {
-	margin-right: 1em;
+	display: inline-block;
+	margin: 0.25em 0.25em 0.25em 0;
 }
 
 #preview #meta a
@@ -462,6 +464,56 @@ body.running header
 	border-radius: 2px;
 	font-weight: bold;
 	text-transform: uppercase;
+}
+
+#meta .extra
+{
+	position: absolute;
+	border-radius: 2px;
+	background: #27ae60;
+	padding: 0.25em;
+	bottom: calc(100% + 0.5em);
+	left: 0;
+	width: 100%;
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+	transform-origin: 32px calc(100% + 8px);
+	transform: scale(0);
+	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+	z-index: 1010;
+}
+
+#meta .extra:after
+{
+	top: 100%;
+	left: 32px;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(39, 174, 96, 0);
+	border-top-color: #27ae60;
+	border-width: 8px;
+	margin-left: -8px;
+}
+
+#meta .extra span
+{
+	color: #27ae60;
+	background: white;
+	display: inline-block;
+	padding: 0.25em 0.5em;
+	font-size: 0.875em;
+	border-radius: 2px;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 0.25em;
+}
+
+#meta li:hover .extra
+{
+	transform: scale(1);
 }
 
 #form .wrapper

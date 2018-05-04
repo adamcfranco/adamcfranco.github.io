@@ -160,6 +160,8 @@ var EPUB =
 	},
 	createTitlePage: function()
 	{
+		let updated = story_metadata["date_updated"];
+		if (updated != "Never") updated = formatTimestamp(story_metadata["date_updated"]);
 		return    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
 				+ "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
@@ -172,14 +174,14 @@ var EPUB =
 				+ "\t\t<div class=\"story_info\">\n"
 				+ "\t\t\t<h1>" + story_metadata["title"] + "</h1>\n"
 				+ "\t\t\t<h2>" + story_metadata["author"] + "</h2>\n"
-				+ "\t\t\t<p><strong>Story Link:</strong> <a href=\"" + story_metadata["link_story"] + "\">" + story_metadata["link_story"] + "</a></p>\n"
-				+ "\t\t\t<p><strong>Author Link:</strong> <a href=\"" + story_metadata["link_author"] + "\">" + story_metadata["link_author"] + "</a></p>\n"
+				+ "\t\t\t<p><strong>Story Link:</strong><br /><a href=\"" + story_metadata["link_story"] + "\">" + story_metadata["link_story"] + "</a></p>\n"
+				+ "\t\t\t<p><strong>Author Link:</strong><br /><a href=\"" + story_metadata["link_author"] + "\">" + story_metadata["link_author"] + "</a></p>\n"
 				+ "\t\t\t<p><strong>Rating:</strong> " + story_metadata["rating"] + "</p>\n"
 				+ "\t\t\t<p><strong>Genre(s):</strong> " + story_metadata["genre"] + "</p>\n"
 				+ "\t\t\t<p><strong>Chapters:</strong> " + story_metadata["num_chapters"] + "</p>\n"
 				+ "\t\t\t<p><strong>Word Count:</strong> " + story_metadata["num_words"] + "</p>\n"
 				+ "\t\t\t<p><strong>Published:</strong> " + formatTimestamp(story_metadata["date_publish"]) + "</p>\n"
-				+ "\t\t\t<p><strong>Last Updated:</strong> " + formatTimestamp(story_metadata["date_updated"]) + "</p>\n"
+				+ "\t\t\t<p><strong>Last Updated:</strong> " + updated + "</p>\n"
 				+ "\t\t\t<p><strong>Status:</strong> " + story_metadata["status"] + "</p>\n"
 				+ "\t\t\t<p><strong>Source:</strong> " + story_metadata["source"] + "</p>\n"
 				+ "\t\t\t<p><strong>Description:</strong><br />" + story_metadata["description"] + "</p>\n"
@@ -249,6 +251,8 @@ var HTML =
 		postMessage(2, "Creating cover image...");
 		createCoverImage(story_metadata["title"], story_metadata["author"], function(base64img)
 		{
+			let updated = story_metadata["date_updated"];
+			if (updated != "Never") updated = formatTimestamp(story_metadata["date_updated"]);
 			cover_html  = "\t\t<img id=\"cover_img\" src=\"" + base64img + "\">\n"
 						+ "\t\t<section id=\"cover\">\n"
 						+ "\t\t\t<header>\n"
@@ -262,7 +266,7 @@ var HTML =
 						+ "\t\t\t<p><strong>Chapters:</strong> " + story_metadata["num_chapters"] + "</p>\n"
 						+ "\t\t\t<p><strong>Word Count:</strong> " + story_metadata["num_words"] + "</p>\n"
 						+ "\t\t\t<p><strong>Published:</strong> " + formatTimestamp(story_metadata["date_publish"]) + "</p>\n"
-						+ "\t\t\t<p><strong>Last Updated:</strong> " + formatTimestamp(story_metadata["date_updated"]) + "</p>\n"
+						+ "\t\t\t<p><strong>Last Updated:</strong> " + updated + "</p>\n"
 						+ "\t\t\t<p><strong>Status:</strong> " + story_metadata["status"] + "</p>\n"
 						+ "\t\t\t<p><strong>Source:</strong> " + story_metadata["source"] + "</p>\n"
 						+ "\t\t\t<p><strong>Description:</strong><br>" + story_metadata["description"] + "</p>\n"

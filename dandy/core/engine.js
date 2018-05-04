@@ -1,26 +1,27 @@
 var story_metadata, story_chapters, story_id, site_namespace, format_namespace, was_successful = false, chapter_links = {};
 let supported_formats = [ "EPUB", "HTML" ];
-let supported_sites = [ "fanfiction.net", "fictionpress.com" ];
+let supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com" ];
 let tidy_options = 
 {
 	"indent": "auto",
 	"indent-spaces": 4,
 	"markup": true,
 	"output-xml": true,
-	"show-warnings": false
+	"show-warnings": false,
+	"drop-empty-paras": true
 }
 /******************************
 
-	MAIN
+MAIN
 
 ******************************/
+
 function startProcess(url, fmt)
 {
 	clearMessages();
 	postMessage(2, "Trying to download <strong>" + url + "</strong> in <strong>" + fmt + "</strong> format.");
 	$("#dds-status h3").text("Status: Working...");
 	setEngineRunning();
-	console.log(url);
 	if (validateURL(url))
 	{
 		if (checkSupportForURL(url))
@@ -72,9 +73,13 @@ function downloadStory()
 
 function cleanChapterContent(html)
 {
-	//html = br2p(html).replace(/<[^\/>][^>]*><\/[^>]+>/gi, '').replace(/\s[\s]+/g, ' ');
-	var result = tidy_html5(html, tidy_options);
-	return result;
+	return tidy_html5(removeEmptyTags(html), tidy_options);
+}
+
+function removeEmptyTags(html)
+{
+	html = html.replace(/&nbsp;/gi, " ");
+	return html.replace(/<[^\/>][^>]*>[\s]*<\/[^>]+>/gi, "");
 }
 
 function cleanMetadata(array)
@@ -98,6 +103,7 @@ function br2p(html)
 	html = "<p>" + parts.join("</p><p>") + "</p>";
 	return html;
 }
+
 function getWebPage(site, xpath, charset, callback)
 {
 	if (!xpath) xpath = "*";
@@ -109,30 +115,34 @@ function getWebPage(site, xpath, charset, callback)
 	}
 	$.ajax({
 		type: "POST",
-		//url: "//www.anyorigin.com/go?url=" + encodeURIComponent(site) + "&callback=?",
-		//url: "//www.whateverorigin.org/get?url=" + encodeURIComponent(site) + "&callback=?",
 		url: 'https://allorigins.me/get?url=' + encodeURIComponent(site) +'&callback=?',
 		contentType: "application/html; charset="+charset,
 		dataType: "json",
 		success: function(json)
 		{
-			//console.log(json);
-			var page = json.contents.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<img[^>]+>/gi, '');
-			var doc = new DOMParser().parseFromString(page, 'text/html');
-			var nodes = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null);
-	        var result = nodes.iterateNext();
-	        var final = [];   
-	        while (result) {
-	           	final.push(result);
-	            result = nodes.iterateNext();
-	        }
-			callback(final);
+			let page = json.contents.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<img[^>]+>/gi, '');
+			let parsed = parseXPATH(page, xpath);
+			callback(parsed);
 		},
 		error: function(xhr,textStatus, errorThrown)
 		{
 			console.log("ERROR: " + xhr.responseText);
 		}
 	});
+}
+
+function parseXPATH(page, xpath)
+{
+	let doc = new DOMParser().parseFromString(page, 'text/html');
+	let nodes = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null);
+	let result = nodes.iterateNext();
+	let final = [];   
+	while (result) 
+	{
+		final.push(result);
+		result = nodes.iterateNext();
+	}
+	return final;
 }
 
 function createCoverImage(title, author, callback, outputFormat)
@@ -147,9 +157,9 @@ function createCoverImage(title, author, callback, outputFormat)
 		canvas.height = this.height;
 		canvas.width = this.width;
 		ctx.drawImage(this, 0, 0);
-		ctx.fillStyle = "white";
+		ctx.fillStyle = "#646464";
 		// Draw Title Text
-		ctx.font = "50px Open Sans";
+		ctx.font = "64px Open Sans";
 		var lines = getLines(ctx, title, 546);
 		var num_lines = lines.length;
 		var lines_height = num_lines * 75;
@@ -162,12 +172,12 @@ function createCoverImage(title, author, callback, outputFormat)
 			y += 75;
 		});
 		// Draw Author Text
-		ctx.font = "25px Open Sans";
-		var author_text = "by: " + author;
+		ctx.font = "32px Open Sans";
+		var author_text = "by " + author;
 		var author_width = ctx.measureText(author_text).width;
 		if (author_width > 546)
 		{
-			author_text = "by: " + author.substr(17) + "..."; 
+			author_text = "by " + author.substr(17) + "..."; 
 			author_width = ctx.measureText(author_text).width;
 		}
 		ctx.fillText(author_text, (canvas.width / 2) - (author_width / 2), 425, 546);
@@ -235,15 +245,15 @@ function padString(str, max)
 	return str.length < max ? padString("0" + str, max) : str;
 }
 
-function formatTimestamp(unix)
+function formatTimestamp(timestamp)
 {
-	var d = new Date(unix * 1000);
+	var d = new Date(timestamp * 1000);
 	return d.getFullYear() + "-" + padString(d.getMonth() + 1, 2) + "-" + padString(d.getDate(), 2);
 }
 
 /******************************
 
-	UI
+UI
 
 ******************************/
 
@@ -257,21 +267,22 @@ $(function()
 	postMessage(2, "Awaiting user input.");
 
 	$('html').removeClass('no-js');
-	
+
 	$('a[data-page]').click(function() 
 	{
 		var page = $(this).data("page");
 		if (page.includes("http://"))
 		{
 			window.open(page, "_blank");
+			return true;
 		}
 		$('.dialog-wrapper#'+page).addClass("active");
 		return false;
 	});
 	$('.dialog input').click(function()
-		{
-			$(this).parents(".dialog-wrapper").removeClass("active");
-		});
+	{
+		$(this).parents(".dialog-wrapper").removeClass("active");
+	});
 
 	$("#download").click(function()
 	{
@@ -340,23 +351,23 @@ function postMessage(type, message)
 	switch (type)
 	{
 		case 0:
-			msgtype = '<i class="fa fa-fw fa-times-circle" title="Error"></i>';
+		msgtype = '<i class="fa fa-fw fa-times-circle" title="Error"></i>';
+		setEngineOff();
+		$title.text("Status: Idle");
+		was_successful = false;
+		break;
+		case 1:
+		msgtype = '<i class="fa fa-fw fa-check-circle" title="Success"></i>';
+		if (message == "Story downloaded successfully!")
+		{
 			setEngineOff();
 			$title.text("Status: Idle");
-			was_successful = false;
-			break;
-		case 1:
-			msgtype = '<i class="fa fa-fw fa-check-circle" title="Success"></i>';
-			if (message == "Story downloaded successfully!")
-			{
-				setEngineOff();
-				$title.text("Status: Idle");
-				was_successful = true;
-			}
-			break;
+			was_successful = true;
+		}
+		break;
 		case 2:
-			msgtype = '<i class="fa fa-fw fa-info-circle" title="Update"></i>';
-			break;
+		msgtype = '<i class="fa fa-fw fa-info-circle" title="Update"></i>';
+		break;
 	}
 	var timestamp = ("0" + hour).slice(-2) + ":" + ("0" + time.getMinutes()).slice(-2) + denotion;
 	$tbody.prepend('<tr><td class="icon">' + msgtype + '</td><td class="timestamp">' + timestamp + '</td><td class="message-body">' + message + '</td></tr>');
@@ -408,21 +419,41 @@ function updateProgressBar(current, max, id)
 function printPreview(metadata)
 {
 
+	let genres = metadata["genre"].split(", ");
+	let genre = "";
+
+	if (genres.length > 1)
+	{
+		genre = genres[0] + ' (+ ' + (genres.length - 1) + ' more)<div class="extra wrapper">';
+		for (let g of genres)
+		{
+			if (g == genres[0]) continue;
+			genre += '<span>' + g + '</span>';
+		}
+		genre += '</div>';
+	}
+	else
+	{
+		genre = metadata["genre"];
+	}
+
+	let desc = metadata["description"].includes("<p>") ? metadata["description"] : ('<p>' + metadata["description"] + '</p>')
+
 	var html = '<div class="wrapper">'
-			 + '<div id="head">'
-			 + '<a class="muted" href="' + metadata["link_story"] + '" title="' + metadata["source"] + '">' + metadata["id"] + '</a>'
-			 + '<h2>' + metadata["title"] + '</h2>'
-			 + 'by <a href="' + metadata["link_author"] + '">' + metadata["author"] + '</a> on ' + formatTimestamp(metadata["date_publish"])
-			 + '</div>'
-			 + '<p>' + metadata["description"] + '</p>'
-			 + '<ul id="meta">'
-			 + '<li><a title="Genre(s)">' + metadata["genre"] + '</a></li>'
-			 + '<li><a title="Rating">' + metadata["rating"] + '</a></li>'
-			 + '<li><a title="Status">' + metadata["status"] + '</a></li>'
-			 + '<li><a title="Chapter Count">' + metadata["num_chapters"] + '</a></li>'
-			 + '<li><a title="Word Count">' + metadata["num_words"] + '</a></li>'
-			 + '<li><a title="Last Update">' + (metadata["date_updated"] == 'Never' ? 'Never' : formatTimestamp(metadata["date_updated"])) + '</a></li>'
-			 + '</ul>';
+	+ '<div id="head">'
+	+ '<a class="muted" href="' + metadata["link_story"] + '" title="' + metadata["source"] + '">' + metadata["id"] + '</a>'
+	+ '<h2>' + metadata["title"] + '</h2>'
+	+ 'by <a href="' + metadata["link_author"] + '">' + metadata["author"] + '</a> on ' + formatTimestamp(metadata["date_publish"])
+	+ '</div>'
+	+ desc
+	+ '<ul id="meta">'
+	+ '<li><a title="Genre(s)">' + genre + '</a></li>'
+	+ '<li><a title="Rating">' + metadata["rating"] + '</a></li>'
+	+ '<li><a title="Status">' + metadata["status"] + '</a></li>'
+	+ '<li><a title="Chapter Count">' + metadata["num_chapters"] + '</a></li>'
+	+ '<li><a title="Word Count">' + metadata["num_words"] + '</a></li>'
+	+ '<li><a title="Last Update">' + (metadata["date_updated"] == 'Never' ? 'Never' : formatTimestamp(metadata["date_updated"])) + '</a></li>'
+	+ '</ul>';
 	$('#preview').html(html);
 	setTimeout(function()
 	{
@@ -430,15 +461,12 @@ function printPreview(metadata)
 	}, 500);
 }
 
-
-
-
 function guid()
 {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
-	function(c) 
-	{
-	    var r = Math.random() * 16|0, v = c == 'x' ? r : (r&0x3|0x8);
-	    return v.toString(16);
-	});
+		function(c) 
+		{
+			var r = Math.random() * 16|0, v = c == 'x' ? r : (r&0x3|0x8);
+			return v.toString(16);
+		});
 }
