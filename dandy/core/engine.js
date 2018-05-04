@@ -1,6 +1,8 @@
 var story_metadata, story_chapters, story_id, site_namespace, format_namespace, was_successful = false, chapter_links = {};
 let supported_formats = [ "EPUB", "HTML" ];
 let supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com" ];
+let c = console;
+console = {};
 let tidy_options = 
 {
 	"indent": "auto",
@@ -20,7 +22,7 @@ function startProcess(url, fmt)
 {
 	clearMessages();
 	postMessage(2, "Trying to download <strong>" + url + "</strong> in <strong>" + fmt + "</strong> format.");
-	$("#dds-status h3").text("Status: Working...");
+	$title.text("Status: Working...");
 	setEngineRunning();
 	if (validateURL(url))
 	{
