@@ -9,12 +9,8 @@ var EPUB =
 	createFile: function()
 	{
 
-		var max = 1;
-		if (story_metadata["num_chapters"] > 9)
-		{ max = 2; }
-		else if (story_metadata["num_chapters"] > 99)
-		{ max = 3; }
-		var epub_styles = "body { font-size: 1em; margin: 0; padding: 0; line-height: 1.5; }\n"
+		let pad = String(story_metadata["num_chapters"]).length;
+		let epub_styles = "body { font-size: 1em; margin: 0; padding: 0; line-height: 1.5; }\n"
 						+ "h1, h2, h3, h4, h5, h6 { text-align: center; font-size: 1em; margin: 0 0 0.8em 0; }\n"
 						+ "a { text-decoration: none; }\n"
 						+ "h1 { font-size: 2em; }\n"
@@ -54,10 +50,8 @@ var EPUB =
 			postMessage(2, "Creating chapter files...");
 			$.each(story_chapters, function(index, chapter)
 			{
-				zip.file("OEBPS/Text/Chapter" + padString(index + 1, max) + ".xhtml", EPUB.createChapterPage(chapter.title, chapter.content) );
+				zip.file("OEBPS/Text/Chapter" + padString(index + 1, pad) + ".xhtml", EPUB.createChapterPage(chapter.title, chapter.content) );
 			});
-
-
 			postMessage(2, "Compressing files...");
 			zip.generateAsync({type: 'blob'}).then(function(file)
 			{	
@@ -72,16 +66,12 @@ var EPUB =
 	},
 	createOPF: function()
 	{
-		var chapters_spine = "";
-		var chapters_manifest = ""
-		var max = 1;
-		if (story_metadata["num_chapters"] > 9)
-		{ max = 2; }
-		else if (story_metadata["num_chapters"] > 99)
-		{ max = 3; }
+		let chapters_spine = "";
+		let chapters_manifest = ""
+		let pad = String(story_metadata["num_chapters"]).length;
 		for (var i = 1; i <= story_metadata["num_chapters"]; i++)
 		{
-			chapter_num = padString(i, max);
+			chapter_num = padString(i, pad);
 			chapters_spine += "\t\t<itemref idref=\"chapter" + chapter_num + "\" linear=\"yes\" />\n"
 			chapters_manifest += "\t\t<item href=\"Text/Chapter" + chapter_num + ".xhtml\" id=\"chapter" + chapter_num + "\" media-type=\"application/xhtml+xml\"/>\n" 
 		}
@@ -118,16 +108,16 @@ var EPUB =
 	},
 	createNCX: function()
 	{
-		var navmap = "";
+		let navmap = "";
 		let totalChapters = parseInt(story_metadata["num_chapters"]) + 1;
-		let padding = totalChapters.toString().length;
-		for (var i = 2; i <= totalChapters; i++)
+		let padding = String(totalChapters).length;
+		for (let i = 2; i <= totalChapters; i++)
 		{
 			let navpoint_num = i.toString().padStart(padding, "0");;
 			let chapter_num = (i - 1).toString().padStart(padding, "0");
 			navmap += "\t\t<navPoint id=\"navpoint-" + navpoint_num + "\" playOrder=\"" + navpoint_num + "\">\n"
 					+ "\t\t\t<navLabel>\n"
-					+ "\t\t\t\t<text>Chapter " + chapter_num + "</text>\n"
+					+ "\t\t\t\t<text>" + chapter_num + ": " + story_chapters[i-2]["title"] + "</text>\n"
 					+ "\t\t\t</navLabel>\n"
 					+ "\t\t\t<content src=\"Text/Chapter" + chapter_num + ".xhtml\" />\n"
 					+ "\t\t</navPoint>\n";

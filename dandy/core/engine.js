@@ -1,6 +1,7 @@
+const CHAPTER_REQUEST_DELAY = 750;
 var story_metadata, story_chapters, story_id, site_namespace, format_namespace, was_successful = false, chapter_links = {};
 let supported_formats = [ "EPUB", "HTML" ];
-let supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com" ];
+let supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com", "adult-fanfiction.org" ];
 let c = console;
 console = {};
 let tidy_options = 
@@ -8,10 +9,11 @@ let tidy_options =
 	"indent": "auto",
 	"indent-spaces": 4,
 	"markup": true,
-	"output-xml": true,
 	"show-warnings": false,
-	"drop-empty-paras": true
+	"show-body-only": "yes",
+	"drop-empty-elements": "yes"
 }
+
 /******************************
 
 MAIN
@@ -75,7 +77,25 @@ function downloadStory()
 
 function cleanChapterContent(html)
 {
-	return tidy_html5(removeEmptyTags(html), tidy_options);
+	html = removeStyling(html);
+	let cleaned = tidy_html5(removeEmptyTags(html), tidy_options);
+	return cleaned;
+}
+
+function removeStyling(html)
+{
+	let $html = $("<div>" + html + "</div>");
+	$('*', $html).each((i, e) => 
+	{
+		let attr = $(e).attr('style');
+		if (attr)
+		{
+			let centered = $(e).attr('style').includes("center");
+			$(e).removeAttr('style');
+			if (centered) $(e).css('text-align', "center");
+		}
+	});
+	return $html.html();
 }
 
 function removeEmptyTags(html)
@@ -216,7 +236,7 @@ function getNamespace(arr, str)
 		var compare = arr[i];
 		if (str.indexOf(compare) > -1)
 		{
-			return compare.replace(".", "");
+			return compare.replace(".", "").replace("-", "");
 		}
 	}
 }

@@ -1,4 +1,112 @@
-const CHAPTER_REQUEST_DELAY = 750;
+/******************************
+
+ADULT-FANFICTION.ORG
+
+******************************/
+let archive = "";
+var adultfanfictionorg = 
+{	
+	getStoryID: function(url, callback)
+	{
+		archive = String( getMatches(url, /([\w]+)\.adult-fanfiction.org/gi, 0) );
+		if (archive)
+		{
+			var regex = /\?no=([\d]+)/;
+			var match = regex.exec(url);
+			if (match)
+			{
+				callback(match[1]);
+			}
+			else postMessage(0, "Could not get story ID from URL.");			
+		} else postMessage(0, "Could not get archive name from Adult-FanFiction URL.");
+	},
+	getMetadata: function(story_id, callback)
+	{
+		let urlChapter = "http://" + archive + ".adult-fanfiction.org/story.php?no=" + story_id;
+		getWebPage(urlChapter, "//h2", null, (results) =>
+		{
+			results = $(results).text();
+			let searchTitle = encodeURIComponent(results);
+			let urlSearch = "http://" + archive + ".adult-fanfiction.org/search.php?auth=&title=" + searchTitle + "&summary=&tags=&cats=0&search=Search";
+			getWebPage(urlSearch, "//div[@id='contentdata']/table", null, (results) => 
+			{
+				let match = null;
+				for(let result of results)
+				{
+					if (result.outerHTML.includes(story_id))
+					{
+						match = result;
+						break;
+					}
+				}
+				if (match == null)
+				{
+					c.log("couldn't find metadata for " + story_id);
+				}
+				else
+				{
+					postMessage(1, "Grabbed metadata source successfully.");
+					postMessage(2, "Parsing metadata...");
+					let $match = $(match);
+					let html = $match.html();
+					let storyTitle = $match.find("a:link")[0].innerText;
+					let storyAuthor = $match.find("a:link")[1].innerText;
+					let storyDesc = $match.find("tr")[2].innerText;
+					let genre = "N/A";
+					let storyRating = String(getMatches(html, /Rated : (.+)\s*-:- Chapters/g, 0)).trim() || "Not Rated";
+					let wordCount = "N/A";	
+					let chapMatches = getMatches(html, /Chapters\s*:\s*([\d]+)/g, 0);
+					let chapCount = parseInt(chapMatches);
+					let regexPublish = getMatches(html, /Published\s*:\s*(.+)<br>/g, 0);
+					let regexUpdated = getMatches(html, /Updated\s*:\s*(.+)\s*-:-\s*Rated/g, 0);
+					let publish = new Date(regexPublish).getTime() / 1000;
+					let updated = new Date(regexUpdated).getTime() / 1000;
+					let status = "N/A";
+					let linkAuthor = $($match.find("a:link")[1]).attr("href");
+					let linkStory = urlChapter;
+					let storySource = "Adult-FanFiction";
+					let metadata = { id: story_id, uuid: guid(), title: storyTitle, author: storyAuthor, description: storyDesc, genre: genre, rating: storyRating, num_words: wordCount, num_chapters: chapCount, date_publish: publish, date_updated: updated, status: status, link_author: linkAuthor, link_story: linkStory, source: storySource };
+					callback(metadata);
+				}
+			});
+		});
+	},
+	getChapters: function(story_id, num_chapters, callback)
+	{
+		postMessage(2, "Beginning chapter downloads...");
+		let progressid = showProgressbar();
+		let chapters = [];
+		let chapter_number = 1;
+		function GetChapter()
+		{
+			updateProgressBar(chapter_number, num_chapters, progressid);
+			let chapter_url = "http://" + archive + ".adult-fanfiction.org/story.php?no=" + story_id + "&chapter=" + chapter_number; 
+			getWebPage(chapter_url, "//div[@id='contentdata']/table/tbody", null, function(results)
+			{
+				results = $(results);
+				html = results.html();
+				let xpathTitle = parseXPATH(html, "(//div[@class='dropdown-content']/a)[" + chapter_number + "]");
+				let title = String(xpathTitle[0].innerText).substr(String(chapter_number).length  + 1) || "Chapter " + chapter_number;
+				let content = $(parseXPATH(cleanChapterContent(html), "//tr[3]/td")).html();
+				chapters.push({ title, content });
+				if (chapter_number >= num_chapters)
+				{
+					updateProgressBar(num_chapters+1, num_chapters, progressid);
+					callback(chapters);
+				}
+				else
+				{
+					setTimeout(function()
+					{
+						chapter_number++;
+						GetChapter();
+					}, CHAPTER_REQUEST_DELAY);
+				}
+			});
+		}
+		GetChapter();
+	}
+};
 /******************************
 
 HPFANFICARCHIVE.COM
@@ -16,7 +124,7 @@ var hpfanficarchivecom =
 	getMetadata: function(story_id, callback)
 	{
 		var meta_url = "http://anonymouse.org/cgi-bin/anon-www.cgi/http://www.hpfanficarchive.com/stories/viewstory.php?sid=" + story_id;
-		getWebPage(meta_url, "(//div[@id='mainpage'])", "iso-8859-1", function(results)
+		getWebPage(meta_url, "(//div[@id='mainpage'])", null, function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
 			postMessage(2, "Parsing metadata...");
@@ -58,12 +166,14 @@ var hpfanficarchivecom =
 			getWebPage(chapter_url, "//div[@id='container']", null, function(results)
 			{
 				results = $(results)[0].outerHTML;
-				let title = String($(results).find('select[name="chapter"]').first().find(":selected").text().replace(chapter_number + ". ", "")) || "Chapter " + chapter_number;
+				let titleHTML = String($(results).find('select[name="chapter"]').first().find(":selected").text().replace(chapter_number + ". ", ""));
+				let title = titleHTML || "Chapter " + chapter_number;
+				c.log(titleHTML);
 				let content = cleanChapterContent( $(parseXPATH(results, "//div[@id='story']")).html() );
 				chapters.push({ title, content });
 				if (chapter_number >= num_chapters)
 				{
-					updateProgressBar(num_chapters+1, num_chapters, progressid);
+					updateProgressBar(num_chapters + 1, num_chapters, progressid);
 					callback(chapters);
 				}
 				else
