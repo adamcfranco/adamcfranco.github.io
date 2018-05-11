@@ -1,9 +1,9 @@
 const CHAPTER_REQUEST_DELAY = 750;
 var story_metadata, story_chapters, story_id, site_namespace, format_namespace, was_successful = false, chapter_links = {};
-let supported_formats = [ "EPUB", "HTML" ];
+let supported_formats = [ "EPUB", "HTML", "PDF", "TXT" ];
 let supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com", "adult-fanfiction.org" ];
-let c = console;
-console = {};
+// let c = console;
+// console = {};
 let tidy_options = 
 {
 	"indent": "auto",
@@ -13,13 +13,62 @@ let tidy_options =
 	"show-body-only": "yes",
 	"drop-empty-elements": "yes"
 }
+/******************************
 
+	VALIDATION
+
+******************************/
+
+function validateURL(url)
+{
+	postMessage(2, "Validating URL...");
+	var regex = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?(\?([-a-zA-Z0-9@:%_\+.~#?&//=]+)|)/ig;
+	if (url.match(regex))
+	{
+		postMessage(1, "URL validated successfully.");
+		return true;
+	}
+	else
+	{
+		postMessage(0, "URL was unable to be validated.");
+		return false;
+	}
+}
+
+function checkSupportForURL(url)
+{
+	postMessage(2, "Checking for URL support...");
+	if (new RegExp(supported_sites.join("|")).test(url)) {
+
+	    postMessage(1, "URL is supported.");
+		return true;
+	}
+	else
+	{
+		postMessage(0, "URL is not supported.");
+		return false;
+	}
+}
+
+function checkSupportForFormat(format)
+{
+	postMessage(2, "Checking for format support...");
+	if (!supported_formats.length == 0 && new RegExp(supported_formats.join("|")).test(format))
+	{
+		postMessage(1, "Format is supported.");
+		return true;
+	}
+	else
+	{
+		postMessage(0, "Format is not supported.");
+		return false;
+	}
+}
 /******************************
 
 MAIN
 
 ******************************/
-
 function startProcess(url, fmt)
 {
 	clearMessages();
@@ -77,6 +126,7 @@ function downloadStory()
 
 function cleanChapterContent(html)
 {
+	html = html.replace(/…/gi, "...");
 	html = removeStyling(html);
 	let cleaned = tidy_html5(removeEmptyTags(html), tidy_options);
 	return cleaned;

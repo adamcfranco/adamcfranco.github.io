@@ -326,7 +326,7 @@ body.running header
 	align-items: center;
 	justify-content: center;
 	flex-wrap: wrap;
-	z-index: 2000;
+	z-index: 3000;
 	visibility: hidden;
 	opacity: 0;
 	transition: visibility 0s linear 600ms, opacity 250ms ease-in-out 500ms;
@@ -352,7 +352,7 @@ body.running header
 	opacity: 0;
 	transition: transform .25s ease-in-out 250ms, opacity .25s ease-in-out 250ms;
 	color: #34495e;
-	z-index: 2010;
+	z-index: 3010;
 }
 
 .dialog-wrapper.active .dialog
@@ -563,6 +563,7 @@ body.running #form .wrapper
 	transform-origin: 100% 25px;
 	transform: scale(0);
 	transition: all 0.25s ease;
+	z-index: 2000;
 }
 
 #format-list.active
