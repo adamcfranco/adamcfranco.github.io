@@ -2,8 +2,8 @@ const CHAPTER_REQUEST_DELAY = 750;
 var story_metadata, story_chapters, story_id, site_namespace, format_namespace, was_successful = false, chapter_links = {};
 let supported_formats = [ "EPUB", "HTML", "PDF", "TXT" ];
 let supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com", "adult-fanfiction.org" ];
-// let c = console;
-// console = {};
+let c = console;
+console = {};
 let tidy_options = 
 {
 	"indent": "auto",

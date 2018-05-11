@@ -41,7 +41,7 @@ var adultfanfictionorg =
 				}
 				if (match == null)
 				{
-					c.log("couldn't find metadata for " + story_id);
+					//c.log("couldn't find metadata for " + story_id);
 				}
 				else
 				{
@@ -168,7 +168,7 @@ var hpfanficarchivecom =
 				results = $(results)[0].outerHTML;
 				let titleHTML = String($(results).find('select[name="chapter"]').first().find(":selected").text().replace(chapter_number + ". ", ""));
 				let title = titleHTML || "Chapter " + chapter_number;
-				c.log(titleHTML);
+				//c.log(titleHTML);
 				let content = cleanChapterContent( $(parseXPATH(results, "//div[@id='story']")).html() );
 				chapters.push({ title, content });
 				if (chapter_number >= num_chapters)

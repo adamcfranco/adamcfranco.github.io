@@ -5,10 +5,10 @@
 ******************************/
 var EPUB =
 {
-	createFile: function()
+	createFile: function(metadata, chapters)
 	{
 
-		let pad = String(story_metadata["num_chapters"]).length;
+		let pad = String(metadata["num_chapters"]).length;
 		let epub_styles = "body { font-size: 1em; margin: 0; padding: 0; line-height: 1.5; }\n"
 		+ "h1, h2, h3, h4, h5, h6 { text-align: center; font-size: 1em; margin: 0 0 0.8em 0; }\n"
 		+ "a { text-decoration: none; }\n"
@@ -33,17 +33,17 @@ var EPUB =
 			+ "\t</rootfiles>\n"
 			+ "</container>");
 		postMessage(2, "Creating file: OEBPS/content.opf");
-		zip.file("OEBPS/content.opf", EPUB.createOPF());
+		zip.file("OEBPS/content.opf", EPUB.createOPF(metadata));
 		postMessage(2, "Creating file: OEBPS/toc.ncx");
-		zip.file("OEBPS/toc.ncx", EPUB.createNCX());
+		zip.file("OEBPS/toc.ncx", EPUB.createNCX(metadata, chapters));
 		postMessage(2, "Creating file: OEBPS/CSS/stylesheet.css");
 		zip.file("OEBPS/CSS/stylesheet.css", epub_styles);
 		postMessage(2, "Creating file: OEBPS/Text/Cover.xhtml");
-		zip.file("OEBPS/Text/Cover.xhtml", EPUB.createCoverPage());
+		zip.file("OEBPS/Text/Cover.xhtml", EPUB.createCoverPage(metadata["title"]));
 		postMessage(2, "Creating file: OEBPS/Text/Title.xhtml");
-		zip.file("OEBPS/Text/Title.xhtml", EPUB.createTitlePage());
+		zip.file("OEBPS/Text/Title.xhtml", EPUB.createTitlePage(metadata));
 		postMessage(2, "Generating Cover Image...");
-		createCoverImage(story_metadata["title"], story_metadata["author"], function(base64img)
+		createCoverImage(metadata["title"], metadata["author"], function(base64img)
 		{
 			zip.file("OEBPS/Images/cover.png", base64img.substr(base64img.indexOf(',')+1), {base64: true});
 			postMessage(2, "Creating chapter files...");
@@ -55,7 +55,7 @@ var EPUB =
 			zip.generateAsync({type: 'blob'}).then(function(file)
 			{	
 				postMessage(2, "Saving...");
-				if (saveAs(file, story_metadata["title"] + ".epub"))
+				if (saveAs(file, metadata["title"] + ".epub"))
 				{
 					postMessage(1, "Story downloaded successfully!");
 				}
@@ -64,15 +64,14 @@ var EPUB =
 					postMessage(0, "Story was not saved.");
 				}
 			});
-
 		});
 	},
-	createOPF: function()
+	createOPF: function(metadata)
 	{
 		let chapters_spine = "";
 		let chapters_manifest = ""
-		let pad = String(story_metadata["num_chapters"]).length;
-		for (var i = 1; i <= story_metadata["num_chapters"]; i++)
+		let pad = String(metadata["num_chapters"]).length;
+		for (var i = 1; i <= metadata["num_chapters"]; i++)
 		{
 			chapter_num = padString(i, pad);
 			chapters_spine += "\t\t<itemref idref=\"chapter" + chapter_num + "\" linear=\"yes\" />\n"
@@ -81,13 +80,13 @@ var EPUB =
 		var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"2.0\" unique-identifier=\"EPB-UUID\">\n"
 		+ "\t<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:opf=\"http://www.idpf.org/2007/opf\">\n"
-		+ "\t\t<dc:title>" + story_metadata["title"] + "</dc:title>\n"
-		+ "\t\t<dc:creator opf:file-as=\"" + story_metadata["author"] + "\" opf:role=\"aut\">" + story_metadata["author"] + "</dc:creator>\n"
-		+ "\t\t<dc:date opf:event=\"epub-publication\">" + formatTimestamp(story_metadata["date_publish"]) + "</dc:date>\n"
-		+ "\t\t<dc:source>" + story_metadata["source"] + "</dc:source>\n"
-		+ "\t\t<dc:identifier id=\"EPB-UUID\">" + story_metadata["uuid"] + "</dc:identifier>\n"
+		+ "\t\t<dc:title>" + metadata["title"] + "</dc:title>\n"
+		+ "\t\t<dc:creator opf:file-as=\"" + metadata["author"] + "\" opf:role=\"aut\">" + metadata["author"] + "</dc:creator>\n"
+		+ "\t\t<dc:date opf:event=\"epub-publication\">" + formatTimestamp(metadata["date_publish"]) + "</dc:date>\n"
+		+ "\t\t<dc:source>" + metadata["source"] + "</dc:source>\n"
+		+ "\t\t<dc:identifier id=\"EPB-UUID\">" + metadata["uuid"] + "</dc:identifier>\n"
 		+ "\t\t<dc:language>en-GB</dc:language>\n"
-		+ "\t\t<dc:rights>Copyright " + story_metadata["author"] + "</dc:rights>\n"
+		+ "\t\t<dc:rights>Copyright " + metadata["author"] + "</dc:rights>\n"
 		+ "\t\t<meta name=\"cover\" content=\"img-cover\"/>\n"
 		+ "\t</metadata>\n"
 		+ "\t<manifest>\n"
@@ -109,10 +108,10 @@ var EPUB =
 		+ "</package>";
 		return xml;
 	},
-	createNCX: function()
+	createNCX: function(metadata, chapters)
 	{
 		let navmap = "";
-		let totalChapters = parseInt(story_metadata["num_chapters"]) + 1;
+		let totalChapters = parseInt(metadata["num_chapters"]) + 1;
 		let padding = String(totalChapters).length;
 		for (let i = 2; i <= totalChapters; i++)
 		{
@@ -120,7 +119,7 @@ var EPUB =
 			let chapter_num = (i - 1).toString().padStart(padding, "0");
 			navmap += "\t\t<navPoint id=\"navpoint-" + navpoint_num + "\" playOrder=\"" + navpoint_num + "\">\n"
 			+ "\t\t\t<navLabel>\n"
-			+ "\t\t\t\t<text>" + chapter_num + ": " + story_chapters[i-2]["title"] + "</text>\n"
+			+ "\t\t\t\t<text>" + chapter_num + ": " + chapters[i-2]["title"] + "</text>\n"
 			+ "\t\t\t</navLabel>\n"
 			+ "\t\t\t<content src=\"Text/Chapter" + chapter_num + ".xhtml\" />\n"
 			+ "\t\t</navPoint>\n";
@@ -128,21 +127,21 @@ var EPUB =
 		var ncx = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?><!DOCTYPE ncx PUBLIC \" -//NISO//DTD ncx 2005-1//EN\" \"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd\">\n"
 		+ "<ncx xmlns=\"http://www.daisy.org/z3986/2005/ncx/\" version=\"2005-1\">\n"
 		+ "\t<head>\n"
-		+ "\t\t<meta name=\"dtb:uid\" content=\"" + story_metadata["uuid"] + "\" />\n"
+		+ "\t\t<meta name=\"dtb:uid\" content=\"" + metadata["uuid"] + "\" />\n"
 		+ "\t\t<meta name=\"dtb:depth\" content=\"1\" />\n"
 		+ "\t\t<meta name=\"dtb:totalPageCount\" content=\"0\" />\n"
 		+ "\t\t<meta name=\"dtb:maxPageNumber\" content=\"0\" />\n"
 		+ "\t</head>\n"
 		+ "\t<docTitle>\n"
-		+ "\t\t<text>" + story_metadata["title"] + "</text>\n"
+		+ "\t\t<text>" + metadata["title"] + "</text>\n"
 		+ "\t</docTitle>\n"
 		+ "\t<docAuthor>\n"
-		+ "\t\t<text>" + story_metadata["author"] + "</text>\n"
+		+ "\t\t<text>" + metadata["author"] + "</text>\n"
 		+ "\t</docAuthor>\n"
 		+ "\t<navMap>\n"
 		+ "\t\t<navPoint id=\"navpoint-" + "1".padStart(padding, "0") + "\" playOrder=\"" + "1".padStart(padding, "0") + "\">\n"
 		+ "\t\t\t<navLabel>\n"
-		+ "\t\t\t\t<text>" + story_metadata["title"] + "</text>\n"
+		+ "\t\t\t\t<text>" + metadata["title"] + "</text>\n"
 		+ "\t\t\t</navLabel>\n"
 		+ "\t\t\t<content src=\"Text/Cover.xhtml\" />\n"
 		+ "\t\t</navPoint>\n"
@@ -151,49 +150,49 @@ var EPUB =
 		+ "</ncx>";
 		return ncx;
 	},
-	createTitlePage: function()
+	createTitlePage: function(metadata)
 	{
-		let updated = story_metadata["date_updated"];
-		if (updated != "Never") updated = formatTimestamp(story_metadata["date_updated"]);
+		let updated = metadata["date_updated"];
+		if (updated != "Never") updated = formatTimestamp(metadata["date_updated"]);
 		return    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
 		+ "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
 		+ "\t<head>\n"
 		+ "\t\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n"
-		+ "\t\t<title>" + story_metadata["title"] + "</title>\n"
+		+ "\t\t<title>" + metadata["title"] + "</title>\n"
 		+ "\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"../CSS/stylesheet.css\" />\n"
 		+ "\t</head>\n"
 		+ "\t<body>\n"
 		+ "\t\t<div class=\"story_info\">\n"
-		+ "\t\t\t<h1>" + story_metadata["title"] + "</h1>\n"
-		+ "\t\t\t<h2>" + story_metadata["author"] + "</h2>\n"
-		+ "\t\t\t<p><strong>Story Link:</strong><br /><a href=\"" + story_metadata["link_story"] + "\">" + story_metadata["link_story"] + "</a></p>\n"
-		+ "\t\t\t<p><strong>Author Link:</strong><br /><a href=\"" + story_metadata["link_author"] + "\">" + story_metadata["link_author"] + "</a></p>\n"
-		+ "\t\t\t<p><strong>Rating:</strong> " + story_metadata["rating"] + "</p>\n"
-		+ "\t\t\t<p><strong>Genre(s):</strong> " + story_metadata["genre"] + "</p>\n"
-		+ "\t\t\t<p><strong>Chapters:</strong> " + story_metadata["num_chapters"] + "</p>\n"
-		+ "\t\t\t<p><strong>Word Count:</strong> " + story_metadata["num_words"] + "</p>\n"
-		+ "\t\t\t<p><strong>Published:</strong> " + formatTimestamp(story_metadata["date_publish"]) + "</p>\n"
+		+ "\t\t\t<h1>" + metadata["title"] + "</h1>\n"
+		+ "\t\t\t<h2>" + metadata["author"] + "</h2>\n"
+		+ "\t\t\t<p><strong>Story Link:</strong><br /><a href=\"" + metadata["link_story"] + "\">" + metadata["link_story"] + "</a></p>\n"
+		+ "\t\t\t<p><strong>Author Link:</strong><br /><a href=\"" + metadata["link_author"] + "\">" + metadata["link_author"] + "</a></p>\n"
+		+ "\t\t\t<p><strong>Rating:</strong> " + metadata["rating"] + "</p>\n"
+		+ "\t\t\t<p><strong>Genre(s):</strong> " + metadata["genre"] + "</p>\n"
+		+ "\t\t\t<p><strong>Chapters:</strong> " + metadata["num_chapters"] + "</p>\n"
+		+ "\t\t\t<p><strong>Word Count:</strong> " + metadata["num_words"] + "</p>\n"
+		+ "\t\t\t<p><strong>Published:</strong> " + formatTimestamp(metadata["date_publish"]) + "</p>\n"
 		+ "\t\t\t<p><strong>Last Updated:</strong> " + updated + "</p>\n"
-		+ "\t\t\t<p><strong>Status:</strong> " + story_metadata["status"] + "</p>\n"
-		+ "\t\t\t<p><strong>Source:</strong> " + story_metadata["source"] + "</p>\n"
-		+ "\t\t\t<p><strong>Description:</strong><br />" + story_metadata["description"] + "</p>\n"
+		+ "\t\t\t<p><strong>Status:</strong> " + metadata["status"] + "</p>\n"
+		+ "\t\t\t<p><strong>Source:</strong> " + metadata["source"] + "</p>\n"
+		+ "\t\t\t<p><strong>Description:</strong><br />" + metadata["description"] + "</p>\n"
 		+ "\t\t</div>\n"
 		+ "\t</body>\n"
 		+ "</html>";
 	},
-	createCoverPage: function()
+	createCoverPage: function(title)
 	{
 		return    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n"
 		+ "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
 		+ "\t<head>\n"
 		+ "\t\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n"
-		+ "\t\t<title>" + story_metadata["title"] + " (Cover Image)</title>\n"
+		+ "\t\t<title>" + title + " (Cover Image)</title>\n"
 		+ "\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"../CSS/stylesheet.css\" />\n"
 		+ "\t</head>\n"
 		+ "\t<body>\n"
-		+ "\t\t<div id=\"cover_image\"><img src=\"../Images/cover.png\" alt=\"" + story_metadata["title"] + " Cover Image\" /></div>\n"
+		+ "\t\t<div id=\"cover_image\"><img src=\"../Images/cover.png\" alt=\"" + title + " Cover Image\" /></div>\n"
 		+ "\t</body>\n"
 		+ "</html>";
 	},
@@ -220,7 +219,7 @@ var EPUB =
 ******************************/
 var HTML =
 {
-	createFile: function()
+	createFile: function(metadata, chapters)
 	{
 		var html_styles = "body { margin: 0; padding: 0; line-height: 2; background: rgb(50, 50, 50); color: #EEE; font-size: 20px; font-family: Times New Roman, Georgia, serif; }\n"
 		+ "a:link, a:visited { color: rgb(0, 127, 255); text-decoration: none; }\n"
@@ -240,34 +239,34 @@ var HTML =
 		+ ".description { margin: 2em 0 0 0; }\n";
 
 		postMessage(2, "Creating cover image...");
-		createCoverImage(story_metadata["title"], story_metadata["author"], function(base64img)
+		createCoverImage(metadata["title"], metadata["author"], function(base64img)
 		{
-			let updated = story_metadata["date_updated"];
-			if (updated != "Never") updated = formatTimestamp(story_metadata["date_updated"]);
+			let updated = metadata["date_updated"];
+			if (updated != "Never") updated = formatTimestamp(metadata["date_updated"]);
 			cover_html  = "\t\t<img id=\"cover_img\" src=\"" + base64img + "\">\n"
 			+ "\t\t<section id=\"cover\">\n"
 			+ "\t\t\t<header>\n"
-			+ "\t\t\t\t<h1>" + story_metadata["title"] + "</h1>\n"
-			+ "\t\t\t\t<h3>by " + story_metadata["author"] + "</h3>\n"
+			+ "\t\t\t\t<h1>" + metadata["title"] + "</h1>\n"
+			+ "\t\t\t\t<h3>by " + metadata["author"] + "</h3>\n"
 			+ "\t\t\t</header>\n"
-			+ "\t\t\t<p><strong>Story Link:</strong> <a href=\"" + story_metadata["link_story"] + "\">" + story_metadata["link_story"] + "</a></p>\n"
-			+ "\t\t\t<p><strong>Author Link:</strong> <a href=\"" + story_metadata["link_author"] + "\">" + story_metadata["link_author"] + "</a></p>\n"
-			+ "\t\t\t<p><strong>Rating:</strong> " + story_metadata["rating"] + "</p>\n"
-			+ "\t\t\t<p><strong>Genre(s):</strong> " + story_metadata["genre"] + "</p>\n"
-			+ "\t\t\t<p><strong>Chapters:</strong> " + story_metadata["num_chapters"] + "</p>\n"
-			+ "\t\t\t<p><strong>Word Count:</strong> " + story_metadata["num_words"] + "</p>\n"
-			+ "\t\t\t<p><strong>Published:</strong> " + formatTimestamp(story_metadata["date_publish"]) + "</p>\n"
+			+ "\t\t\t<p><strong>Story Link:</strong> <a href=\"" + metadata["link_story"] + "\">" + metadata["link_story"] + "</a></p>\n"
+			+ "\t\t\t<p><strong>Author Link:</strong> <a href=\"" + metadata["link_author"] + "\">" + metadata["link_author"] + "</a></p>\n"
+			+ "\t\t\t<p><strong>Rating:</strong> " + metadata["rating"] + "</p>\n"
+			+ "\t\t\t<p><strong>Genre(s):</strong> " + metadata["genre"] + "</p>\n"
+			+ "\t\t\t<p><strong>Chapters:</strong> " + metadata["num_chapters"] + "</p>\n"
+			+ "\t\t\t<p><strong>Word Count:</strong> " + metadata["num_words"] + "</p>\n"
+			+ "\t\t\t<p><strong>Published:</strong> " + formatTimestamp(metadata["date_publish"]) + "</p>\n"
 			+ "\t\t\t<p><strong>Last Updated:</strong> " + updated + "</p>\n"
-			+ "\t\t\t<p><strong>Status:</strong> " + story_metadata["status"] + "</p>\n"
-			+ "\t\t\t<p><strong>Source:</strong> " + story_metadata["source"] + "</p>\n"
-			+ "\t\t\t<p><strong>Description:</strong><br>" + story_metadata["description"] + "</p>\n"
+			+ "\t\t\t<p><strong>Status:</strong> " + metadata["status"] + "</p>\n"
+			+ "\t\t\t<p><strong>Source:</strong> " + metadata["source"] + "</p>\n"
+			+ "\t\t\t<p><strong>Description:</strong><br>" + metadata["description"] + "</p>\n"
 			+ "\t\t</section>\n";
 			var raw  = "<html lang=\"en\">\n"
 			+ "\t<head>\n"
 			+ "\t\t<meta charset=\"UTF-8\">\n"
 			+ "\t\t<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n"
 			+ "\t\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-			+ "\t\t<title>" + story_metadata["author"] + " - " + story_metadata["title"] + "</title>\n"
+			+ "\t\t<title>" + metadata["author"] + " - " + metadata["title"] + "</title>\n"
 			+ "\t\t<style>\n"
 			+ html_styles
 			+ "\t\t</style>\n"
@@ -275,15 +274,15 @@ var HTML =
 			+ "\t<body>\n"
 			+ "\t\t<div class=\"wrapper\">\n"
 			+ cover_html
-			+ HTML.createTOC()
-			+ HTML.createChapters()
+			+ HTML.createTOC(chapters)
+			+ HTML.createChapters(chapters)
 			+ "\t\t</div>\n"
 			+ "\t</body>\n"
 			+ "</html>\n";
 			postMessage(2, "Generating HTML file...");
 			var file = new Blob([raw], {type: "text/html;charset=utf-8"});
 			postMessage(2, "Saving file...");
-			if (saveAs(file, story_metadata["title"] + ".html"))
+			if (saveAs(file, metadata["title"] + ".html"))
 			{
 				postMessage(1, "Story downloaded successfully!");
 			}
@@ -293,39 +292,42 @@ var HTML =
 			}
 		});
 	},
-	createTOC: function()
+	createTOC: function(chapters)
 	{
 		var toc = '<section id="toc"><h2>Table of Contents</h2><ol>';
-		$.each(story_chapters, function(index, chapter)
+		let index = 1;
+		for (let chapter of chapters)
 		{
-			toc += '<li><a href="#chapter_' + (index + 1) + '">' + chapter.title + '</a></li>';
-		});
+			toc += '<li><a href="#chapter_' + index + '">' + chapter.title + '</a></li>';
+			index++;
+		}
 		toc += '</ol></section>';
 		return toc;
 	},
-	createChapters: function()
+	createChapters: function(chapters)
 	{
-		var chapters = "";
-		$.each(story_chapters, function(index, chapter)
+		var content = "";
+		let index = 1;
+		for (let chapter of chapters)
 		{
-			chapters += "\t\t<section class=\"chapter\" id=\"chapter_" + (index + 1) + "\">\n"
+			content += "\t\t<section class=\"chapter\" id=\"chapter_" + index + "\">\n"
 			+ "\t\t\t<h2>" + chapter.title + "</h2>\n"
 			+ "\t\t\t" + chapter.content
 			+ "\t\t</section>\n";
-		});
-		return chapters;
+			index++;
+		}
+		return content;
 	}
 };
 /******************************
 *
-*	PDF
+* PDF
 *
 ******************************/
 var PDF =
 {
 	createFile: function(metadata, chapters)
 	{
-
 		let pdfDef = 
 		{
 			content:
@@ -352,17 +354,15 @@ var PDF =
 		};
 		for (let chapter of chapters)
 		{
-			let content = $(chapter.content).text();
+			let content = $("<div>" + chapter.content + "</div>").text();
 			pdfDef.content.push({ text: chapter.title, style: 'chapterTitle' }, { text: content, pageBreak: 'after' });
-		}
-		
+		}	
 		postMessage(2, "Generating PDF file...");
 		let pdf = pdfMake.createPdf(pdfDef);
-		
 		postMessage(2, "Saving file...");
 		pdf.getBlob((result) =>
 		{
-			if (saveAs(result, "test.pdf"))
+			if (saveAs(result, metadata["title"] + ".pdf"))
 			{
 				postMessage(1, "Story downloaded successfully!");
 			}
@@ -387,7 +387,7 @@ var TXT =
 		fileContents = metadata["title"] + "\nby " + metadata["author"] + "\n\n"; 
 		for (let chapter of chapters)
 		{
-			let content = $(chapter.content).text();
+			let content = $("<div>" + chapter.content + "</div>").text();
 			fileContents += chapter.title + "\n";
 			fileContents += content + "\n";			
 		}
