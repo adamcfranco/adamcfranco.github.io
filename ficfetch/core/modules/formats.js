@@ -296,7 +296,7 @@ var HTML =
 			postMessage(2, "Generating HTML file...");
 			var file = new Blob([raw], {type: "text/html;charset=utf-8"});
 			postMessage(2, "Saving file...");
-			if (saveAs(file, filename + ".html"))
+			if (saveAs(file, fileName + ".html"))
 			{
 				postMessage(1, "Story downloaded successfully!");
 			}
