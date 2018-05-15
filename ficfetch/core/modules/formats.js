@@ -7,7 +7,7 @@ var EPUB =
 {
 	createFile: function(metadata, chapters)
 	{
-
+		let fileName = metadata["title"].replace(/[^a-z0-9]/gi, '_');
 		let pad = String(metadata["num_chapters"]).length;
 		let epub_styles = "body { font-size: 1em; margin: 0; padding: 0; line-height: 1.5; }\n"
 		+ "h1, h2, h3, h4, h5, h6 { text-align: center; font-size: 1em; margin: 0 0 0.8em 0; }\n"
@@ -52,10 +52,20 @@ var EPUB =
 				zip.file("OEBPS/Text/Chapter" + padString(index + 1, pad) + ".xhtml", EPUB.createChapterPage(chapter.title, chapter.content) );
 			});
 			postMessage(2, "Compressing files...");
-			zip.generateAsync({type: 'blob'}).then(function(file)
+			zip.generateAsync(
+			{
+				type: 'blob',
+				mimeType: 'application/epub+zip',
+				compression: 'DEFLATE',
+				compressionOptions:
+				{
+					level: 9
+				}
+
+			}).then(function(file)
 			{	
 				postMessage(2, "Saving...");
-				if (saveAs(file, metadata["title"] + ".epub"))
+				if (saveAs(file, fileName + ".epub"))
 				{
 					postMessage(1, "Story downloaded successfully!");
 				}
@@ -221,7 +231,8 @@ var HTML =
 {
 	createFile: function(metadata, chapters)
 	{
-		var html_styles = "body { margin: 0; padding: 0; line-height: 2; background: rgb(50, 50, 50); color: #EEE; font-size: 20px; font-family: Times New Roman, Georgia, serif; }\n"
+		let fileName = metadata["title"].replace(/[^a-z0-9]/gi, '_');
+		var html_styles = "body { margin: 0; padding: 0; line-height: 2; background: rgb(245, 245, 245); color: rgb(50, 50, 50); font-size: 20px; font-family: Times New Roman, Georgia, serif; }\n"
 		+ "a:link, a:visited { color: rgb(0, 127, 255); text-decoration: none; }\n"
 		+ "a:link:hover, a:visited:hover { color: rgb(255, 127, 0); text-decoration: underline; }\n"
 		+ ".wrapper { margin: 2em auto; width: 800px; }\n"
@@ -236,7 +247,10 @@ var HTML =
 		+ "p { margin: 0.5em 0; padding: 0; text-align: justify; }\n"
 		+ "#cover_img { display: block; padding: 0 5; margin: 2em auto; width: 400px; }\n"
 		+ ".clear { clear: both; }\n"
-		+ ".description { margin: 2em 0 0 0; }\n";
+		+ ".description { margin: 2em 0 0 0; }\n"
+		+ ".chapter-title { margin: 1em 0; }\n"
+		+ ".chapter-title h2 { margin: 0; line-height: 24px; }\n"
+		+ ".hidden { display: none; }\n";
 
 		postMessage(2, "Creating cover image...");
 		createCoverImage(metadata["title"], metadata["author"], function(base64img)
@@ -245,7 +259,7 @@ var HTML =
 			if (updated != "Never") updated = formatTimestamp(metadata["date_updated"]);
 			cover_html  = "\t\t<img id=\"cover_img\" src=\"" + base64img + "\">\n"
 			+ "\t\t<section id=\"cover\">\n"
-			+ "\t\t\t<header>\n"
+			+ "\t\t\t<header class=\"hidden\">\n"
 			+ "\t\t\t\t<h1>" + metadata["title"] + "</h1>\n"
 			+ "\t\t\t\t<h3>by " + metadata["author"] + "</h3>\n"
 			+ "\t\t\t</header>\n"
@@ -282,7 +296,7 @@ var HTML =
 			postMessage(2, "Generating HTML file...");
 			var file = new Blob([raw], {type: "text/html;charset=utf-8"});
 			postMessage(2, "Saving file...");
-			if (saveAs(file, metadata["title"] + ".html"))
+			if (saveAs(file, filename + ".html"))
 			{
 				postMessage(1, "Story downloaded successfully!");
 			}
@@ -311,7 +325,10 @@ var HTML =
 		for (let chapter of chapters)
 		{
 			content += "\t\t<section class=\"chapter\" id=\"chapter_" + index + "\">\n"
-			+ "\t\t\t<h2>" + chapter.title + "</h2>\n"
+			+ "\t\t\t<div class=\"chapter-title\">\n"
+			+ "\t\t\t\t<a href=\"#toc\"><small>Back to table of contents</small></a>\n"
+			+ "\t\t\t\t<h2>" + chapter.title + "</h2>\n"
+			+ "\t\t\t</div>\n"
 			+ "\t\t\t" + chapter.content
 			+ "\t\t</section>\n";
 			index++;
@@ -328,6 +345,7 @@ var PDF =
 {
 	createFile: function(metadata, chapters)
 	{
+		let fileName = metadata["title"].replace(/[^a-z0-9]/gi, '_');
 		let pdfDef = 
 		{
 			content:
@@ -352,25 +370,53 @@ var PDF =
 			pageSize: 'LETTER',
 			pageMargins: [ 70, 50, 70, 50 ]
 		};
-		for (let chapter of chapters)
+		for (let i = 0; i < chapters.length; i++)
 		{
+			let chapter = chapters[i];
 			let content = $("<div>" + chapter.content + "</div>").text();
-			pdfDef.content.push({ text: chapter.title, style: 'chapterTitle' }, { text: content, pageBreak: 'after' });
-		}	
-		postMessage(2, "Generating PDF file...");
-		let pdf = pdfMake.createPdf(pdfDef);
-		postMessage(2, "Saving file...");
-		pdf.getBlob((result) =>
-		{
-			if (saveAs(result, metadata["title"] + ".pdf"))
+			if (i < chapters.length - 1)
 			{
-				postMessage(1, "Story downloaded successfully!");
+				pdfDef.content.push({ text: chapter.title, style: 'chapterTitle' }, { text: content, pageBreak: 'after' });
 			}
 			else
 			{
-				postMessage(0, "Story was not saved.");
+				pdfDef.content.push({ text: chapter.title, style: 'chapterTitle' }, { text: content });
 			}
-		});
+		}
+		postMessage(2, "Generating PDF file...");
+		if (window.Worker)
+		{
+			c.log("worker supported");
+			let worker = new Worker('core/modules/create-pdf.js');
+			let message = { generatePDFAsync: { def: pdfDef } };
+			worker.postMessage(message);
+			worker.onmessage = (e) =>
+			{
+				let blob = e.data;
+				c.log(e.data);
+				PDF.save(blob, fileName);
+			};
+		}
+		else
+		{
+			//prone to freezing while creating large files
+			pdfMake.createPdf(pdfDef).getBlob((blob) =>
+			{
+				PDF.save(blob, fileName);
+			}); 
+		}
+	},
+	save: function(blob, title)
+	{
+		postMessage(2, "Saving file...");
+		if (saveAs(blob, title + ".pdf"))
+		{
+			postMessage(1, "Story downloaded successfully!");
+		}
+		else
+		{
+			postMessage(0, "Story was not saved.");
+		}
 	}
 };
 /******************************
@@ -382,9 +428,10 @@ var TXT =
 {
 	createFile: function(metadata, chapters)
 	{
+		let fileName = metadata["title"].replace(/[^a-z0-9]/gi, '_');
 		postMessage(2, "Generating TXT file...");
 		let fileContents = "";
-		fileContents = metadata["title"] + "\nby " + metadata["author"] + "\n\n"; 
+		fileContents = metadata["title"] + "\nby " + metadata["author"] + "\n\nGenerated by ficfetch.xyz\n\n===============\n\n"; 
 		for (let chapter of chapters)
 		{
 			let content = $("<div>" + chapter.content + "</div>").text();
@@ -393,7 +440,7 @@ var TXT =
 		}
 		var file = new Blob([fileContents], {type: "text/plain;charset=utf-8"});
 		postMessage(2, "Saving file...");
-		if (saveAs(file, metadata["title"] + ".txt"))
+		if (saveAs(file, fileName + ".txt"))
 		{
 			postMessage(1, "Story downloaded successfully!");
 		}

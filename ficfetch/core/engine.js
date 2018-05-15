@@ -11,14 +11,14 @@ let tidy_options =
 	"markup": true,
 	"show-warnings": false,
 	"show-body-only": "yes",
-	"drop-empty-elements": "yes"
+	"drop-empty-elements": "yes",
+	"output-xhtml": "yes"
 }
 /******************************
 
 	VALIDATION
 
 ******************************/
-
 function validateURL(url)
 {
 	postMessage(2, "Validating URL...");
