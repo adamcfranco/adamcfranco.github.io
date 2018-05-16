@@ -3,7 +3,7 @@
 ADULT-FANFICTION.ORG
 
 ******************************/
-let archive = "";
+var archive = "";
 var adultfanfictionorg = 
 {	
 	getStoryID: function(url, callback)
@@ -11,8 +11,8 @@ var adultfanfictionorg =
 		archive = String( getMatches(url, /([\w]+)\.adult-fanfiction.org/gi, 0) );
 		if (archive)
 		{
-			var regex = /\?no=([\d]+)/;
-			var match = regex.exec(url);
+			let regex = /\?no=([\d]+)/;
+			let match = regex.exec(url);
 			if (match)
 			{
 				callback(match[1]);
@@ -116,14 +116,14 @@ var hpfanficarchivecom =
 {
 	getStoryID: function(url, callback)
 	{
-		var regex = /\?sid=([\d]+)/;
-		var match = regex.exec(url);
+		let regex = /\?sid=([\d]+)/;
+		let match = regex.exec(url);
 		if (match) callback(match[1]);
 		else postMessage(0, "Could not get story ID from url.");
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "http://anonymouse.org/cgi-bin/anon-www.cgi/http://www.hpfanficarchive.com/stories/viewstory.php?sid=" + story_id;
+		let meta_url = "http://anonymouse.org/cgi-bin/anon-www.cgi/http://www.hpfanficarchive.com/stories/viewstory.php?sid=" + story_id;
 		getWebPage(meta_url, "(//div[@id='mainpage'])", null, function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
@@ -198,8 +198,8 @@ var fanfictionnet =
 {
 	getStoryID: function(url, callback)
 	{
-		var regex = /s\/([\d]+)/;
-		var match = regex.exec(url);
+		let regex = /s\/([\d]+)/;
+		let match = regex.exec(url);
 		if (match)
 		{
 			callback(match[1]);
@@ -211,15 +211,15 @@ var fanfictionnet =
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "www.fanfiction.net/s/" + story_id + "/";
+		let meta_url = "www.fanfiction.net/s/" + story_id + "/";
 		getWebPage(meta_url, "//div[@id='profile_top']", null, function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
 			postMessage(2, "Parsing metadata...");
-			var div = $(results);
-			var infoblock;
+			let div = $(results);
+			let infoblock;
 			infoblock = div.children("span.xgray").text();
-			var publish, updated;
+			let publish, updated;
 			if (getMatches(infoblock, /Updated\: ([\w\s\,]+)/g, 0).length > 0)
 			{
 				updated = div.children("span.xgray").find("span[data-xutime]:first-of-type").attr("data-xutime");
@@ -231,7 +231,7 @@ var fanfictionnet =
 				publish = div.children("span.xgray").find("span[data-xutime]").attr("data-xutime");
 			}
 			let status = String(getMatches(infoblock, /Status\: ([\w]+)/g, 0)) || "In Progress";
-			var metadata = {
+			let metadata = {
 				id: story_id,
 				uuid: guid(),
 				title: div.children("b.xcontrast_txt").text(),
@@ -254,13 +254,13 @@ var fanfictionnet =
 	getChapters: function(story_id, num_chapters, callback)
 	{
 		postMessage(2, "Beginning chapter downloads...");
-		var progressid = showProgressbar();
-		var chapters = [];
-		var chapter_number = 1;
+		let progressid = showProgressbar();
+		let chapters = [];
+		let chapter_number = 1;
 		function GetChapter()
 		{
 			updateProgressBar(chapter_number, num_chapters, progressid);
-			var chapter_url = "www.fanfiction.net/s/" + story_id + "/" + chapter_number + "/";
+			let chapter_url = "www.fanfiction.net/s/" + story_id + "/" + chapter_number + "/";
 			getWebPage(chapter_url, "//div[@id='content_wrapper_inner']", null, function(results)
 			{
 				let raw = $(results);
@@ -294,8 +294,8 @@ var fictionpresscom =
 {
 	getStoryID: function(url, callback)
 	{
-		var regex = /s\/([\d]+)/;
-		var match = regex.exec(url);
+		let regex = /s\/([\d]+)/;
+		let match = regex.exec(url);
 		if (match)
 		{
 			callback(match[1]);
@@ -307,15 +307,15 @@ var fictionpresscom =
 	},
 	getMetadata: function(story_id, callback)
 	{
-		var meta_url = "www.fictionpress.com/s/" + story_id + "/";
+		let meta_url = "www.fictionpress.com/s/" + story_id + "/";
 		getWebPage(meta_url, "//div[@id='profile_top']", null, function(results)
 		{
 			postMessage(1, "Grabbed metadata source successfully.");
 			postMessage(2, "Parsing metadata...");
-			var div = $(results);
-			var infoblock;
+			let div = $(results);
+			let infoblock;
 			infoblock = div.children("span.xgray").text();
-			var publish, updated;
+			let publish, updated;
 			if (getMatches(infoblock, /Updated\: ([\w\s\,]+)/g, 0).length > 0)
 			{
 				updated = div.children("span.xgray").find("span[data-xutime]:first-of-type").attr("data-xutime");
@@ -327,7 +327,7 @@ var fictionpresscom =
 				publish = div.children("span.xgray").find("span[data-xutime]").attr("data-xutime");
 			}
 			let status = String(getMatches(infoblock, /Status\: ([\w]+)/g, 0)) || "In Progress";
-			var metadata = {
+			let metadata = {
 				id: story_id,
 				uuid: guid(),
 				title: div.children("b.xcontrast_txt").text(),
@@ -350,13 +350,13 @@ var fictionpresscom =
 	getChapters: function(story_id, num_chapters, callback)
 	{
 		postMessage(2, "Beginning chapter downloads...");
-		var progressid = showProgressbar();
-		var chapters = [];
-		var chapter_number = 1;
+		let progressid = showProgressbar();
+		let chapters = [];
+		let chapter_number = 1;
 		function GetChapter()
 		{
 			updateProgressBar(chapter_number, num_chapters, progressid);
-			var chapter_url = "www.fictionpress.com/s/" + story_id + "/" + chapter_number + "/";
+			let chapter_url = "www.fictionpress.com/s/" + story_id + "/" + chapter_number + "/";
 			getWebPage(chapter_url, "//div[@id='content_wrapper_inner']", null, function(results)
 			{
 				let raw = $(results);
