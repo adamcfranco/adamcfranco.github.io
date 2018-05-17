@@ -83,6 +83,7 @@ function startProcess(url, fmt)
 		{
 			if (checkSupportForFormat(fmt))
 			{
+				
 				site_namespace = getNamespace(supported_sites, url);
 				format_namespace = getNamespace(supported_formats, fmt);
 				window[site_namespace].getStoryID(url, function(id)
@@ -129,8 +130,9 @@ function downloadStory()
 function cleanChapterContent(html)
 {
 	html = html.replace(/…/gi, "...");
-	html = removeStyling(html);
-	let cleaned = tidy_html5(removeEmptyTags(html), tidy_options);
+	html = removeStyling(html);	
+	let cleaned = removeEmptyTags(html);
+	cleaned = tidy_html5(cleaned, tidy_options);
 	return cleaned;
 }
 
@@ -288,7 +290,7 @@ function getNamespace(arr, str)
 		let compare = arr[i];
 		if (str.indexOf(compare) > -1)
 		{
-			return compare.replace(".", "").replace("-", "");
+			return compare.replace(/\./g, "").replace(/\-/g, "");
 		}
 	}
 }

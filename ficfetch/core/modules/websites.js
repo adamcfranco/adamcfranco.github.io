@@ -1,3 +1,4 @@
+
 /******************************
 
 ADULT-FANFICTION.ORG
@@ -41,7 +42,7 @@ var adultfanfictionorg =
 				}
 				if (match == null)
 				{
-					//c.log("couldn't find metadata for " + story_id);
+					postMessage(0, "Couldn't find metadata for ID: " + story_id + " on adult-fanfiction.org." );
 				}
 				else
 				{
@@ -83,11 +84,11 @@ var adultfanfictionorg =
 			let chapter_url = "http://" + archive + ".adult-fanfiction.org/story.php?no=" + story_id + "&chapter=" + chapter_number; 
 			getWebPage(chapter_url, "//div[@id='contentdata']/table/tbody", null, function(results)
 			{
-				results = $(results);
-				html = results.html();
+				let html = $(results).html();
 				let xpathTitle = parseXPATH(html, "(//div[@class='dropdown-content']/a)[" + chapter_number + "]");
 				let title = String(xpathTitle[0].innerText).substr(String(chapter_number).length  + 1) || "Chapter " + chapter_number;
-				let content = $(parseXPATH(cleanChapterContent(html), "//tr[3]/td")).html();
+				let rawContent = $(results).children().eq(2).html();
+				let content = cleanChapterContent(rawContent);
 				chapters.push({ title, content });
 				if (chapter_number >= num_chapters)
 				{

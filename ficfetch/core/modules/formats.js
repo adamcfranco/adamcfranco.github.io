@@ -390,14 +390,12 @@ var PDF =
 		postMessage(2, "Generating PDF file...");
 		if (window.Worker)
 		{
-			c.log("worker supported");
 			let worker = new Worker('core/modules/create-pdf.js');
 			let message = { generatePDFAsync: { def: pdfDef } };
 			worker.postMessage(message);
 			worker.onmessage = (e) =>
 			{
 				let blob = e.data;
-				c.log(e.data);
 				PDF.save(blob, fileName);
 			};
 		}
