@@ -1,8 +1,60 @@
-
 /******************************
+*
+* SIYE.CO.UK
+*
+******************************/
+var siyecouk =
+{
+	getStoryID: (url, callback) =>
+	{
+		let regex = /\?sid=([\d]+)/;
+		let match = regex.exec(url);
+		if (match) callback(match[1]);
+		else postMessage(0, "Could not get story ID from url.");
+	},
+	getMetadata: (story_id, callback) =>
+	{
+		let meta_url = "http://www.siye.co.uk/viewstory.php?sid=" + story_id;
+		getWebPage(meta_url, "(//table/tbody/tr/td/table[3])", null, function(results)
+		{
+			c.log(results[0].innerText);
+			return;
+			postMessage(1, "Grabbed metadata source successfully.");
+			postMessage(2, "Parsing metadata...");
+			results = $(results)[0].outerHTML;
+			let pageTitle = $(parseXPATH(results, "//div[@id='pagetitle']")).html();
+			let storyInfo = $(parseXPATH(results, "(//div[@class='block'])[2]")).html();
+			let titleHTML = String(getMatches(pageTitle, /<!-- TITLE START -->(.+)<!-- TITLE END -->/g, 0));
+			let authorHTML = String(getMatches(pageTitle, /<!-- AUTHOR START -->(.+)<!-- AUTHOR END -->/g, 0));
+			let storyTitle = $(titleHTML).text();
+			let storyAuthor = $(authorHTML).text();
+			let storyDesc = String(getMatches(storyInfo, /<!-- SUMMARY START -->([\S\s]+)<!-- SUMMARY END -->/g, 0));
+			storyDesc = removeEmptyTags(storyDesc);
+			let genreRaw = String(getMatches(storyInfo, /Genres: <\/span>(.+)<br><span class="label">P/g, 0));
+			let genreText = $($.parseHTML(genreRaw)).text().trim();
+			let storyRating = String(getMatches(storyInfo, /Rated:<\/span>(.+)<br>/g, 0));
+			let wordCount = getMatches(storyInfo, /<!-- WORDCOUNT START -->([\d\,]+)<!-- WORDCOUNT END -->/g, 0);
+			let chapCount = parseInt(getMatches(storyInfo, /Chapters: <\/span>(.+)<span/g, 0));
+			let publish = new Date(getMatches(storyInfo, /<!-- PUBLISHED START -->(.+)<!-- PUBLISHED END -->/g, 0)).getTime() / 1000;
+			let updateMatches = getMatches(storyInfo, /<!-- UPDATED START -->(.+)<!-- UPDATED END -->/g, 0);
+			let updated = updateMatches.length > 0 ? new Date(updateMatches).getTime() / 1000 : "Never";
+			let status = String(getMatches(storyInfo, /Completed:<\/span>(.+)<br/g, 0)).includes("No") ? "In Progress" : "Complete";
+			let linkAuthor = $(authorHTML).attr("href");
+			let linkStory = meta_url;
+			let storySource = "Harry Potter FanFic Archive";
+			let metadata = { id: story_id, uuid: guid(), title: storyTitle, author: storyAuthor, description: storyDesc, genre: genreText, rating: storyRating, num_words: wordCount, num_chapters: chapCount, date_publish: publish, date_updated: updated, status: status, link_author: linkAuthor, link_story: linkStory, source: storySource };
+			callback(metadata);
+		});
+	},
+	getChapters: (story_id, num_chapters, callback) =>
+	{
 
-ADULT-FANFICTION.ORG
-
+	}
+};
+/******************************
+*
+* ADULT-FANFICTION.ORG
+*
 ******************************/
 var archive = "";
 var adultfanfictionorg = 
@@ -109,9 +161,9 @@ var adultfanfictionorg =
 	}
 };
 /******************************
-
-HPFANFICARCHIVE.COM
-
+*
+* HPFANFICARCHIVE.COM
+* 
 ******************************/
 var hpfanficarchivecom = 
 {
@@ -191,9 +243,9 @@ var hpfanficarchivecom =
 	}
 };
 /******************************
-
-FANFICTION.NET
-
+* 
+* FANFICTION.NET
+*
 ******************************/
 var fanfictionnet = 
 {
@@ -287,9 +339,9 @@ var fanfictionnet =
 	}
 };
 /******************************
-
-FICTIONPRESS.COM
-
+*
+* FICTIONPRESS.COM
+* 
 ******************************/
 var fictionpresscom = 
 {

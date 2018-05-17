@@ -3,7 +3,7 @@ var story_metadata, story_chapters, story_id, site_namespace, format_namespace,
 was_successful = false, 
 chapter_links = {}, 
 supported_formats = [ "EPUB", "HTML", "PDF", "TXT" ],
-supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com", "adult-fanfiction.org" ],
+supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com", "adult-fanfiction.org", "siye.co.uk" ],
 tidy_options = 
 {
 	"indent": "auto",
@@ -16,6 +16,7 @@ tidy_options =
 };
 var c = console;
 console = {};
+c.log("--- DEBUG ---")
 /******************************
 
 	VALIDATION
