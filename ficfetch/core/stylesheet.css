@@ -14,7 +14,12 @@ body
 	min-width: 320px;
 }
 
-
+.notification
+{
+	font-style: italic;
+	font-size: 0.8571em;
+	color: #27ae60;
+}
 
 a, a:link, a:visited
 {
