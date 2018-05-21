@@ -1,22 +1,21 @@
 const CHAPTER_REQUEST_DELAY = 750;
-var story_metadata, story_chapters, story_id, site_namespace, format_namespace, 
-was_successful = false, 
-chapter_links = {}, 
-supported_formats = [ "EPUB", "HTML", "PDF", "TXT" ],
-supported_sites = [ "fanfiction.net", "fictionpress.com", "hpfanficarchive.com", "adult-fanfiction.org", "siye.co.uk" ],
-tidy_options = 
-{
-	"indent": "auto",
-	"indent-spaces": 4,
-	"markup": true,
-	"show-warnings": false,
-	"show-body-only": "yes",
-	"drop-empty-elements": "yes",
-	"output-xhtml": "yes"
-};
+var story_metadata, story_chapters, story_id, site_namespace, format_namespace,
+	was_successful = false,
+	chapter_links = {},
+	supported_formats = ["EPUB", "HTML", "PDF", "TXT"],
+	supported_sites = ["fanfiction.net", "fictionpress.com", "hpfanficarchive.com", "adult-fanfiction.org", "siye.co.uk"],
+	tidy_options =
+		{
+			"indent": "auto",
+			"indent-spaces": 4,
+			"markup": true,
+			"show-warnings": false,
+			"show-body-only": "yes",
+			"drop-empty-elements": "yes",
+			"output-xhtml": "yes"
+		};
 var c = console;
 console = {};
-c.log("--- DEBUG ---")
 /******************************
 
 	VALIDATION
@@ -41,9 +40,10 @@ function validateURL(url)
 function checkSupportForURL(url)
 {
 	postMessage(2, "Checking for URL support...");
-	if (new RegExp(supported_sites.join("|")).test(url)) {
+	if (new RegExp(supported_sites.join("|")).test(url))
+	{
 
-	    postMessage(1, "URL is supported.");
+		postMessage(1, "URL is supported.");
 		return true;
 	}
 	else
@@ -84,10 +84,10 @@ function startProcess(url, fmt)
 		{
 			if (checkSupportForFormat(fmt))
 			{
-				
+
 				site_namespace = getNamespace(supported_sites, url);
 				format_namespace = getNamespace(supported_formats, fmt);
-				window[site_namespace].getStoryID(url, function(id)
+				window[site_namespace].getStoryID(url, function (id)
 				{
 					story_id = id;
 					if (!(typeof story_metadata === 'undefined') && was_successful)
@@ -115,12 +115,12 @@ function startProcess(url, fmt)
 function downloadStory()
 {
 	postMessage(2, "Getting story metadata...");
-	window[site_namespace].getMetadata(story_id, function(metadata)
+	window[site_namespace].getMetadata(story_id, function (metadata)
 	{
 		story_metadata = cleanMetadata(metadata);
 		printPreview(story_metadata);
 		postMessage(1, "Parsed metadata successfully. Preview now available.");
-		window[site_namespace].getChapters(story_id, story_metadata["num_chapters"], function(chapters)
+		window[site_namespace].getChapters(story_id, story_metadata["num_chapters"], function (chapters)
 		{
 			story_chapters = chapters;
 			window[format_namespace].createFile(story_metadata, story_chapters);
@@ -131,7 +131,8 @@ function downloadStory()
 function cleanChapterContent(html)
 {
 	html = html.replace(/…/gi, "...");
-	html = removeStyling(html);	
+	html = "<p>" + html.replace(/(<br\s*\/?>\s?<br\s*\/?>)/g, "</p><p>") + "</p>";
+	html = removeStyling(html);
 	let cleaned = removeEmptyTags(html);
 	cleaned = tidy_html5(cleaned, tidy_options);
 	return cleaned;
@@ -161,7 +162,7 @@ function removeEmptyTags(html)
 
 function cleanMetadata(array)
 {
-	$.each(array, function(key, value)
+	$.each(array, function (key, value)
 	{
 		array[key] = $.trim(value).replace(/\s\s+/g, ' ');
 		if (array[key] === null || array[key] == " " || array[key] == "")
@@ -192,16 +193,16 @@ function getWebPage(site, xpath, charset, callback)
 	}
 	$.ajax({
 		type: "POST",
-		url: 'https://allorigins.me/get?url=' + encodeURIComponent(site) +'&callback=?',
-		contentType: "application/html; charset="+charset,
+		url: 'https://allorigins.me/get?url=' + encodeURIComponent(site) + '&callback=?',
+		contentType: "application/html; charset=" + charset,
 		dataType: "json",
-		success: function(json)
+		success: function (json)
 		{
 			let page = json.contents.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<img[^>]+>/gi, '');
 			let parsed = parseXPATH(page, xpath);
 			callback(parsed);
 		},
-		error: function(xhr,textStatus, errorThrown)
+		error: function (xhr, textStatus, errorThrown)
 		{
 			console.log("ERROR: " + xhr.responseText);
 		}
@@ -213,7 +214,7 @@ function parseXPATH(page, xpath)
 	let doc = new DOMParser().parseFromString(page, 'text/html');
 	let nodes = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null);
 	let result = nodes.iterateNext();
-	let final = [];   
+	let final = [];
 	while (result) 
 	{
 		final.push(result);
@@ -226,7 +227,7 @@ function createCoverImage(title, author, callback, outputFormat)
 {
 	let img = new Image();
 	img.crossOrigin = 'Anonymous';
-	img.onload = function()
+	img.onload = function ()
 	{
 		let canvas = document.createElement('CANVAS');
 		let ctx = canvas.getContext('2d');
@@ -241,7 +242,7 @@ function createCoverImage(title, author, callback, outputFormat)
 		let num_lines = lines.length;
 		let lines_height = num_lines * 75;
 		let y = (448 / 2) - ((lines_height - 75) / 2);
-		$.each(lines, function(key, value)
+		$.each(lines, function (key, value)
 		{
 			let lineWidth = ctx.measureText(value).width;
 			let x = (canvas.width / 2) - (lineWidth / 2);
@@ -254,13 +255,13 @@ function createCoverImage(title, author, callback, outputFormat)
 		let author_width = ctx.measureText(author_text).width;
 		if (author_width > 546)
 		{
-			author_text = "by " + author.substr(17) + "..."; 
+			author_text = "by " + author.substr(17) + "...";
 			author_width = ctx.measureText(author_text).width;
 		}
 		ctx.fillText(author_text, (canvas.width / 2) - (author_width / 2), 425, 546);
 		dataURL = canvas.toDataURL(outputFormat);
 		callback(dataURL);
-		canvas = null; 
+		canvas = null;
 	};
 	img.src = "core/cover.png";
 }
@@ -270,12 +271,15 @@ function getLines(ctx, text, maxWidth)
 	let words = text.split(" ");
 	let lines = [];
 	let currentLine = words[0];
-	for (let i = 1; i < words.length; i++) {
+	for (let i = 1; i < words.length; i++)
+	{
 		let word = words[i];
 		let width = ctx.measureText(currentLine + " " + word).width;
-		if (width < maxWidth) {
+		if (width < maxWidth)
+		{
 			currentLine += " " + word;
-		} else {
+		} else
+		{
 			lines.push(currentLine);
 			currentLine = word;
 		}
@@ -338,14 +342,14 @@ let $table = $('#status table');
 let $tbody = $('#status table tbody');
 let $title = $('#status h3')
 
-$(function()
+$(function ()
 {
 
 	postMessage(2, "Awaiting user input.");
 
 	$('html').removeClass('no-js');
 
-	$('a[data-page]').click(function() 
+	$('a[data-page]').click(function () 
 	{
 		let page = $(this).data("page");
 		if (page.includes("http://"))
@@ -353,22 +357,22 @@ $(function()
 			window.open(page, "_blank");
 			return true;
 		}
-		$('.dialog-wrapper#'+page).addClass("active");
+		$('.dialog-wrapper#' + page).addClass("active");
 		return false;
 	});
-	$('.dialog input').click(function()
+	$('.dialog input').click(function ()
 	{
 		$(this).parents(".dialog-wrapper").removeClass("active");
 	});
 
-	$("#download").click(function()
+	$("#download").click(function ()
 	{
 		let input_url = $("#url").val();
 		let input_fmt = $("#format span").text();
 		startProcess(input_url, input_fmt);
 	});
 
-	$(window).click( () => $("#format-list").removeClass("active") );
+	$(window).click(() => $("#format-list").removeClass("active"));
 
 	$("#format").click((event) => 
 	{
@@ -377,20 +381,20 @@ $(function()
 	});
 
 
-	$("#format-list").on("click", "p", function()
+	$("#format-list").on("click", "p", function ()
 	{
 		$("#format span").html($(this).text());
 	});
 
-	$.each(supported_sites, function(index, value)
+	$.each(supported_sites, function (index, value)
 	{
-		$('#supported_site_list').append('<li><small>'+value+'</small></li>');
+		$('#supported_site_list').append('<li><small>' + value + '</small></li>');
 	});
 
-	$.each(supported_formats, function(index, value)
+	$.each(supported_formats, function (index, value)
 	{
 		$('#format-list').append('<p>' + value + '</p>');
-		$('#supported_format_list').append('<li><small>'+value+'</small></li>');
+		$('#supported_format_list').append('<li><small>' + value + '</small></li>');
 	});
 
 });
@@ -400,8 +404,8 @@ function setEngineRunning()
 	$('body').addClass("running");
 	$('.textbox').addClass("disabled");
 	$('.cdd').addClass("disabled");
-	$('.button').addClass("disabled");
-	$('.button, .textbox').prop("disabled", true);
+	$('.button:not(.link)').addClass("disabled");
+	$('.button:not(.link), .textbox').prop("disabled", true);
 }
 
 function setEngineOff()
@@ -409,8 +413,8 @@ function setEngineOff()
 	$('body').removeClass("running");
 	$('.textbox').removeClass("disabled");
 	$('.cdd').removeClass("disabled");
-	$('.button').removeClass("disabled");
-	$('.button, .textbox').prop("disabled", false);
+	$('.button:not(.link)').removeClass("disabled");
+	$('.button:not(.link), .textbox').prop("disabled", false);
 }
 
 function postMessage(type, message)
@@ -428,23 +432,23 @@ function postMessage(type, message)
 	switch (type)
 	{
 		case 0:
-		msgtype = '<i class="fa fa-fw fa-times-circle" title="Error"></i>';
-		setEngineOff();
-		$title.text("Status: Idle");
-		was_successful = false;
-		break;
-		case 1:
-		msgtype = '<i class="fa fa-fw fa-check-circle" title="Success"></i>';
-		if (message == "Story downloaded successfully!")
-		{
+			msgtype = '<i class="fa fa-fw fa-times-circle" title="Error"></i>';
 			setEngineOff();
 			$title.text("Status: Idle");
-			was_successful = true;
-		}
-		break;
+			was_successful = false;
+			break;
+		case 1:
+			msgtype = '<i class="fa fa-fw fa-check-circle" title="Success"></i>';
+			if (message == "Story downloaded successfully!")
+			{
+				setEngineOff();
+				$title.text("Status: Idle");
+				was_successful = true;
+			}
+			break;
 		case 2:
-		msgtype = '<i class="fa fa-fw fa-info-circle" title="Update"></i>';
-		break;
+			msgtype = '<i class="fa fa-fw fa-info-circle" title="Update"></i>';
+			break;
 	}
 	let timestamp = ("0" + hour).slice(-2) + ":" + ("0" + time.getMinutes()).slice(-2) + denotion;
 	$tbody.prepend('<tr><td class="icon">' + msgtype + '</td><td class="timestamp">' + timestamp + '</td><td class="message-body">' + message + '</td></tr>');
@@ -478,7 +482,7 @@ function showProgressbar()
 
 function updateProgressBar(current, max, id)
 {
-	let bar = $(".progressbar#"+id);
+	let bar = $(".progressbar#" + id);
 	let percentage = (current / max) * 100;
 	if (current > max)
 	{
@@ -490,7 +494,7 @@ function updateProgressBar(current, max, id)
 	{
 		bar.find(".progressbar-text").html("Downloading Chapter " + current + " of " + max + ".");
 	}
-	bar.children(".progressbar-inner").css("width", percentage+"%");
+	bar.children(".progressbar-inner").css("width", percentage + "%");
 }
 
 function printPreview(metadata)
@@ -513,22 +517,23 @@ function printPreview(metadata)
 	}
 	let desc = metadata["description"].includes("<p>") ? metadata["description"] : ('<p>' + metadata["description"] + '</p>')
 	let html = '<div class="wrapper">'
-	+ '<div id="head">'
-	+ '<a class="muted" href="' + metadata["link_story"] + '" title="' + metadata["source"] + '">' + metadata["id"] + '</a>'
-	+ '<h2>' + metadata["title"] + '</h2>'
-	+ 'by <a href="' + metadata["link_author"] + '">' + metadata["author"] + '</a> on ' + formatTimestamp(metadata["date_publish"])
-	+ '</div>'
-	+ desc
-	+ '<ul id="meta">'
-	+ '<li><a title="Genre(s)">' + genre + '</a></li>'
-	+ '<li><a title="Rating">' + metadata["rating"] + '</a></li>'
-	+ '<li><a title="Status">' + metadata["status"] + '</a></li>'
-	+ '<li><a title="Chapter Count">' + metadata["num_chapters"] + '</a></li>'
-	+ '<li><a title="Word Count">' + metadata["num_words"] + '</a></li>'
-	+ '<li><a title="Last Update">' + (metadata["date_updated"] == 'Never' ? 'Never' : formatTimestamp(metadata["date_updated"])) + '</a></li>'
-	+ '</ul>';
+		+ '<div id="head">'
+		+ '<a class="muted" href="' + metadata["link_story"] + '" title="' + metadata["source"] + '">' + metadata["id"] + '</a>'
+		+ '<h2>' + metadata["title"] + '</h2>'
+		+ 'by <a href="' + metadata["link_author"] + '">' + metadata["author"] + '</a>'
+		+ (metadata["date_publish"] == "N/A" ? "" : ' on ' + formatTimestamp(metadata["date_publish"]))
+		+ '</div>'
+		+ desc
+		+ '<ul id="meta">'
+		+ (metadata["genre"] == "N/A" ? "" : '<li><a title="Genre(s)">' + genre + '</a></li>')
+		+ (metadata["rating"] == "N/A" ? "" : '<li><a title="Rating">' + metadata["rating"] + '</a></li>')
+		+ (metadata["status"] == "N/A" ? "" : '<li><a title="Status">' + metadata["status"] + '</a></li>')
+		+ (metadata["num_chapters"] == "N/A" ? "" : '<li><a title="Chapter Count">' + metadata["num_chapters"] + '</a></li>')
+		+ (metadata["num_words"] == "N/A" ? "" : '<li><a title="Word Count">' + metadata["num_words"] + '</a></li>')
+		+ (metadata["date_updated"] == "N/A" ? "" : '<li><a title="Last Update">' + (metadata["date_updated"] == 'Never' ? 'Never' : formatTimestamp(metadata["date_updated"])) + '</a></li>')
+		+ '</ul>';
 	$('#preview').html(html);
-	setTimeout(function()
+	setTimeout(function ()
 	{
 		$('#preview').removeClass("collapsed");
 	}, 500);
@@ -538,7 +543,7 @@ function guid()
 {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) =>
 	{
-		let r = Math.random() * 16|0, v = c == 'x' ? r : (r&0x3|0x8);
+		let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
 		return v.toString(16);
 	});
 }

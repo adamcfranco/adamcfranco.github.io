@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
+
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="keywords" content="FicFetch save story fan fiction download harry potter">
 	<meta name="author" content="Adam Franco">
 	<meta name="description" content="FicFetch allows you to download stories and fanfiction from various websites around the web.">
-<!-- 	<link rel="icon" type="image/png" href="favicon/256.png" sizes="256x256">
+	<!-- 	<link rel="icon" type="image/png" href="favicon/256.png" sizes="256x256">
 	<link rel="icon" type="image/png" href="favicon/128.png" sizes="128x128">
 	<link rel="icon" type="image/png" href="favicon/64.png" sizes="64x64">
 	<link rel="icon" type="image/png" href="favicon/32.png" sizes="32x32">
@@ -18,73 +19,104 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="core/stylesheet.css">
 </head>
+
 <body>
 
-	<div class="dialog-wrapper" id="about">
-		<div class="dialog">
-			<div class="dialog-title">FicFetch is an online story downloader.</div>
-			<div class="dialog-content">
-				<p>This is a client-side app, meaning it costs me nothing to run, and can be hosted for free on my <a href="//www.github.com/adamcfranco">GitHub</a>.</p>
-				<p>Check out the <strong>support</strong> link for info on what formats and sites are currently available.</p>
-				<p>Created with <span class="heart">&#10084;</span> for the community over at <a href="//www.reddit.com/r/HPFanFiction">/r/HPFanFiction</a> by <a href="//www.adamfranco.ca">Adam Franco</a>.</p>
+	<div class="no-js-hide">
+
+		<header>
+			<div class="wrapper">
+				<nav>
+					<ul>
+						<li>
+							<a class="button link" data-page="about">about</a>
+						</li>
+						<li>
+							<a class="button link" data-page="support">support</a>
+						</li>
+					</ul>
+				</nav>
+				<h1>ficfetch</h1>
 			</div>
-			<div class="dialog-options" align="right"><input type="button" class="button flat" value="CLOSE"></div>
-		</div>
-	</div>
+		</header>
 
-	<div class="dialog-wrapper" id="support">
-		<div class="dialog">
-			<div class="dialog-title">Support Information</div>
-			<div class="dialog-content">
-				<p>I will be periodically adding support for different websites and formats, but there is no real time-frame for updates or fixes.</p>
-				<p>If you are experiencing any issues downloading a story, or have a suggestion for future updates to dandy, please send an email to <a href="mailto:support@ficfetch.xyz">support@ficfetch.xyz</a>. I will try to provide help as often as I can.</p>
-				<p><strong>Currently supported websites:</strong></p>
-				<ul id="supported_site_list"></ul>
-				<p><strong>Currently supported formats:</strong></p>
-				<ul id="supported_format_list"></ul>	
+		<div id="form">
+			<div class="wrapper">
+				<input id="url" class="textbox" placeholder="URL" value="">
+				<span id="format" class="button">
+					<span>EPUB</span>
+					<div id="format-list"></div>
+				</span>
+				<button id="download" class="button green">
+					<i class="fa fa-fw fa-download"></i>
+					<span>DOWNLOAD</span>
+				</button>
 			</div>
-			<div class="dialog-options" align="right"><input type="button" class="button flat" value="CLOSE"></div>
 		</div>
+
+		<div id="preview" class="collapsed"></div>
+
+		<div id="status">
+			<div class="wrapper">
+				<h3>Status: Idle</h3>
+				<table>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="dialog-wrapper" id="about">
+			<div class="dialog">
+				<div class="dialog-title">FicFetch is an online story downloader.</div>
+				<div class="dialog-content">
+					<p>This is a client-side app, meaning it costs me nothing to run, and can be hosted for free on my
+						<a href="//www.github.com/adamcfranco">GitHub</a>.</p>
+					<p>Check out the
+						<strong>support</strong> link for info on what formats and sites are currently available.</p>
+					<p>Created with
+						<span class="heart">&#10084;</span> for the community over at
+						<a href="//www.reddit.com/r/HPFanFiction">/r/HPFanFiction</a> by
+						<a href="//www.adamfranco.ca">Adam Franco</a>.</p>
+				</div>
+				<div class="dialog-options" align="right">
+					<input type="button" class="button flat link" value="CLOSE">
+				</div>
+			</div>
+		</div>
+
+		<div class="dialog-wrapper" id="support">
+			<div class="dialog">
+				<div class="dialog-title">Support Information</div>
+				<div class="dialog-content">
+					<p>I will be periodically adding support for different websites and formats, but there is no real time-frame for updates
+						or fixes.</p>
+					<p>If you are experiencing any issues downloading a story, or have a suggestion for future updates to dandy, please send
+						an email to
+						<a href="mailto:support@ficfetch.xyz">support@ficfetch.xyz</a>. I will try to provide help as often as I can.</p>
+					<p>
+						<strong>Currently supported websites:</strong>
+					</p>
+					<ul id="supported_site_list"></ul>
+					<p>
+						<strong>Currently supported formats:</strong>
+					</p>
+					<ul id="supported_format_list"></ul>
+				</div>
+				<div class="dialog-options" align="right">
+					<input type="button" class="button flat link" value="CLOSE">
+				</div>
+			</div>
+		</div>
+
 	</div>
 
-	<header>
+	<div class="no-js-notification">
 		<div class="wrapper">
-			<nav>
-				<ul>
-					<li><a class="button" data-page="about">about</a></li>
-					<li><a class="button" data-page="support">support</a></li>
-				</ul>
-			</nav>
-			<h1>ficfetch</h1>
-		</div>
-	</header>
-
-	<div id="form">
-		<div class="wrapper">
-			<input id="url" class="textbox" placeholder="URL" value="">
-			<span id="format" class="button">
-				<span>EPUB</span>
-				<div id="format-list"></div>
-			</span>
-			<button id="download" class="button green"><i class="fa fa-fw fa-download"></i><span>DOWNLOAD</span></button>
+			<h3>Hello!</h3>
+			<p>ficfetch is built using
+				<strong>JavaScript</strong>. Please enable it and refresh your browser in order to use it!</p>
 		</div>
 	</div>
-
-	<div id="preview" class="collapsed"></div>
-
-	<div id="status">
-		<div class="wrapper">
-			<h3>Status: Idle</h3>
-			<table><tbody></tbody></table>
-		</div>
-	</div>
-
-<!-- 	<div id="no-js-notification">
-		<div class="wrapper">
-			<h3>Hi.</h3>
-			<p>Dandy is built using <strong>JavaScript</strong>. Please enable it and refresh your browser in order to use it!</p>
-		</div>
-	</div> -->
 
 	<script type="text/javascript" src="core/libraries/jquery.min.js"></script>
 	<script type="text/javascript" src="core/libraries/tidyhtml5.min.js"></script>
@@ -92,11 +124,10 @@
 	<script type="text/javascript" src="core/libraries/jszip.min.js"></script>
 	<script type="text/javascript" src="core/libraries/pdfmake.min.js"></script>
 	<script type="text/javascript" src="core/libraries/vfs_fonts.js"></script>
-
 	<script type="text/javascript" src="core/engine.js"></script>
 	<script type="text/javascript" src="core/modules/websites.js"></script>
 	<script type="text/javascript" src="core/modules/formats.js"></script>
 
-	
 </body>
+
 </html>
