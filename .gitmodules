@@ -1,0 +1,3 @@
+[submodule "sat-collision-detection"]
+	path = sat-collision-detection
+	url = https://github.com/adamcfranco/SAT-Collision-Detection
